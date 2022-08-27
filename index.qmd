@@ -20,5 +20,6 @@ were made using Quarto's `revealjs` format, and can be accessed here:
 * [Probability, Inference and Genotype Likelihoods LECTURE SLIDES](https://eriqande.github.io/con-gen-2022/slides/prob-slides.html)
 * [Snakemake Introduction LECTURE SLIDES](https://eriqande.github.io/con-gen-2022/slides/snake-slides.html)
 
-To learn more about Quarto books visit <https://quarto.org/docs/books>.
+If you haven't heard about Quarto yet, it is RStudio's successor to RMarkdown
+for making book, notebooks, and slide presentations.  To learn more about Quarto books visit <https://quarto.org/docs/books>.
 

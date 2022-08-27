@@ -11,7 +11,9 @@ book:
     - probinf.qmd
     - snakemake.qmd
     - references.qmd
-
+  sidebar: 
+    logo: quarto-static/fisheries_header_logo_jul2019.png
+    
 bibliography: references.bib
 
 format:
