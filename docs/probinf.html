@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Con-Gen-2022 - 1&nbsp; Probability, inference, and genotype likelihoods</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./snakemake.html" rel="next">
+<link href="./index.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Probability, inference, and genotype likelihoods</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Con-Gen-2022</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Overview/Welcome</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./probinf.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Probability, inference, and genotype likelihoods</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./snakemake.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">A brief introduction to Snakemake</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">References</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#preamble" id="toc-preamble" class="nav-link active" data-scroll-target="#preamble"> <span class="header-section-number">1.1</span> Preamble</a></li>
+  <li><a href="#bayesian-inference" id="toc-bayesian-inference" class="nav-link" data-scroll-target="#bayesian-inference"> <span class="header-section-number">1.2</span> Bayesian Inference</a>
+  <ul class="collapse">
+  <li><a href="#personal-probability" id="toc-personal-probability" class="nav-link" data-scroll-target="#personal-probability"> <span class="header-section-number">1.2.1</span> Personal Probability</a></li>
+  <li><a href="#probability-as-a-measuring-stick-for-uncertainty" id="toc-probability-as-a-measuring-stick-for-uncertainty" class="nav-link" data-scroll-target="#probability-as-a-measuring-stick-for-uncertainty"> <span class="header-section-number">1.2.2</span> Probability as a “Measuring Stick” for Uncertainty</a></li>
+  <li><a href="#an-interesting-digression" id="toc-an-interesting-digression" class="nav-link" data-scroll-target="#an-interesting-digression"> <span class="header-section-number">1.2.3</span> An interesting digression</a></li>
+  <li><a href="#updating-beliefs" id="toc-updating-beliefs" class="nav-link" data-scroll-target="#updating-beliefs"> <span class="header-section-number">1.2.4</span> Updating Beliefs</a></li>
+  <li><a href="#a-simple-conditional-probability-and-dags" id="toc-a-simple-conditional-probability-and-dags" class="nav-link" data-scroll-target="#a-simple-conditional-probability-and-dags"> <span class="header-section-number">1.2.5</span> A Simple Conditional Probability and DAGs</a></li>
+  <li><a href="#a-picture-of-inference-of-allele-frequencies-from-a-sample-of-genotypes" id="toc-a-picture-of-inference-of-allele-frequencies-from-a-sample-of-genotypes" class="nav-link" data-scroll-target="#a-picture-of-inference-of-allele-frequencies-from-a-sample-of-genotypes"> <span class="header-section-number">1.2.6</span> A Picture of Inference of Allele Frequencies From a Sample of Genotypes</a></li>
+  <li><a href="#methods-of-inference" id="toc-methods-of-inference" class="nav-link" data-scroll-target="#methods-of-inference"> <span class="header-section-number">1.2.7</span> Methods of Inference</a></li>
+  <li><a href="#some-important-probability-rules" id="toc-some-important-probability-rules" class="nav-link" data-scroll-target="#some-important-probability-rules"> <span class="header-section-number">1.2.8</span> Some important probability rules</a></li>
+  <li><a href="#bayesian-inference-for-p_a" id="toc-bayesian-inference-for-p_a" class="nav-link" data-scroll-target="#bayesian-inference-for-p_a"> <span class="header-section-number">1.2.9</span> Bayesian Inference for <span class="math inline">\(p_A\)</span></a></li>
+  <li><a href="#a-family-of-priors-for-p_a" id="toc-a-family-of-priors-for-p_a" class="nav-link" data-scroll-target="#a-family-of-priors-for-p_a"> <span class="header-section-number">1.2.10</span> A family of priors for <span class="math inline">\(p_A\)</span></a></li>
+  <li><a href="#a-graphical-aside" id="toc-a-graphical-aside" class="nav-link" data-scroll-target="#a-graphical-aside"> <span class="header-section-number">1.2.11</span> A Graphical Aside</a></li>
+  <li><a href="#the-posterior-for-p_a" id="toc-the-posterior-for-p_a" class="nav-link" data-scroll-target="#the-posterior-for-p_a"> <span class="header-section-number">1.2.12</span> The posterior for <span class="math inline">\(p_A\)</span></a></li>
+  <li><a href="#shiny-interlude-1" id="toc-shiny-interlude-1" class="nav-link" data-scroll-target="#shiny-interlude-1"> <span class="header-section-number">1.2.13</span> Shiny Interlude #1</a></li>
+  <li><a href="#to-the-bayesian-the-posterior-distribution-is-everything" id="toc-to-the-bayesian-the-posterior-distribution-is-everything" class="nav-link" data-scroll-target="#to-the-bayesian-the-posterior-distribution-is-everything"> <span class="header-section-number">1.2.14</span> To the Bayesian, the posterior distribution is everything</a></li>
+  <li><a href="#some-standard-ways-of-summarizing-the-posterior" id="toc-some-standard-ways-of-summarizing-the-posterior" class="nav-link" data-scroll-target="#some-standard-ways-of-summarizing-the-posterior"> <span class="header-section-number">1.2.15</span> Some standard ways of summarizing the posterior</a></li>
+  </ul></li>
+  <li><a href="#monte-carlo-sampling-from-a-posterior-distribution" id="toc-monte-carlo-sampling-from-a-posterior-distribution" class="nav-link" data-scroll-target="#monte-carlo-sampling-from-a-posterior-distribution"> <span class="header-section-number">1.3</span> Monte Carlo sampling from a posterior distribution</a>
+  <ul class="collapse">
+  <li><a href="#a-vanilla-monte-carlo-sample-from-the-posterior-for-p_a" id="toc-a-vanilla-monte-carlo-sample-from-the-posterior-for-p_a" class="nav-link" data-scroll-target="#a-vanilla-monte-carlo-sample-from-the-posterior-for-p_a"> <span class="header-section-number">1.3.1</span> A “vanilla” Monte Carlo sample from the posterior for <span class="math inline">\(p_A\)</span></a></li>
+  <li><a href="#transformations-are-simple-with-a-monte-carlo-sample" id="toc-transformations-are-simple-with-a-monte-carlo-sample" class="nav-link" data-scroll-target="#transformations-are-simple-with-a-monte-carlo-sample"> <span class="header-section-number">1.3.2</span> Transformations are simple with a Monte Carlo sample</a></li>
+  </ul></li>
+  <li><a href="#probcall" id="toc-probcall" class="nav-link" data-scroll-target="#probcall"> <span class="header-section-number">1.4</span> Probabilistic Genotype Calling / Allele frequency estimation</a>
+  <ul class="collapse">
+  <li><a href="#why-is-this-a-good-idea" id="toc-why-is-this-a-good-idea" class="nav-link" data-scroll-target="#why-is-this-a-good-idea"> <span class="header-section-number">1.4.1</span> Why is this a good idea?</a></li>
+  <li><a href="#conditional-probabilities-in-the-model" id="toc-conditional-probabilities-in-the-model" class="nav-link" data-scroll-target="#conditional-probabilities-in-the-model"> <span class="header-section-number">1.4.2</span> Conditional probabilities in the model</a></li>
+  <li><a href="#the-conditional-probability-pboldsymbolr_iy_i1-y_i2-mu" id="toc-the-conditional-probability-pboldsymbolr_iy_i1-y_i2-mu" class="nav-link" data-scroll-target="#the-conditional-probability-pboldsymbolr_iy_i1-y_i2-mu"> <span class="header-section-number">1.4.3</span> The conditional probability <span class="math inline">\(P(\boldsymbol{R}_i~|~Y_{i,1}, Y_{i,2}, \mu)\)</span></a></li>
+  <li><a href="#some-of-the-assumptions-in-the-above-model" id="toc-some-of-the-assumptions-in-the-above-model" class="nav-link" data-scroll-target="#some-of-the-assumptions-in-the-above-model"> <span class="header-section-number">1.4.4</span> Some of the assumptions in the above model…</a></li>
+  <li><a href="#an-intuitive-picture-of-how-monte-carlo-might-proceed" id="toc-an-intuitive-picture-of-how-monte-carlo-might-proceed" class="nav-link" data-scroll-target="#an-intuitive-picture-of-how-monte-carlo-might-proceed"> <span class="header-section-number">1.4.5</span> An intuitive picture of how Monte Carlo might proceed</a></li>
+  <li><a href="#what-is-the-markov-chain-part-of-mcmc" id="toc-what-is-the-markov-chain-part-of-mcmc" class="nav-link" data-scroll-target="#what-is-the-markov-chain-part-of-mcmc"> <span class="header-section-number">1.4.6</span> What is the Markov Chain part of MCMC?</a></li>
+  <li><a href="#why-mcmc-is-so-great-for-bayesians" id="toc-why-mcmc-is-so-great-for-bayesians" class="nav-link" data-scroll-target="#why-mcmc-is-so-great-for-bayesians"> <span class="header-section-number">1.4.7</span> Why MCMC is so great for Bayesians</a></li>
+  <li><a href="#why-mcmc-can-be-not-so-great" id="toc-why-mcmc-can-be-not-so-great" class="nav-link" data-scroll-target="#why-mcmc-can-be-not-so-great"> <span class="header-section-number">1.4.8</span> Why MCMC can be not-so-great</a></li>
+  <li><a href="#playing-with-genotype-likelihoods-and-genotype-posteriors" id="toc-playing-with-genotype-likelihoods-and-genotype-posteriors" class="nav-link" data-scroll-target="#playing-with-genotype-likelihoods-and-genotype-posteriors"> <span class="header-section-number">1.4.9</span> Playing with genotype likelihoods and genotype posteriors</a></li>
+  <li><a href="#shiny-interlude-2" id="toc-shiny-interlude-2" class="nav-link" data-scroll-target="#shiny-interlude-2"> <span class="header-section-number">1.4.10</span> Shiny Interlude #2</a></li>
+  <li><a href="#back-to-breakout-roomssome-questions" id="toc-back-to-breakout-roomssome-questions" class="nav-link" data-scroll-target="#back-to-breakout-roomssome-questions"> <span class="header-section-number">1.4.11</span> Back to breakout rooms…some questions:</a></li>
+  </ul></li>
+  <li><a href="#one-final-hands-on-exercise" id="toc-one-final-hands-on-exercise" class="nav-link" data-scroll-target="#one-final-hands-on-exercise"> <span class="header-section-number">1.5</span> One final hands on exercise</a>
+  <ul class="collapse">
+  <li><a href="#shiny-interlude-3" id="toc-shiny-interlude-3" class="nav-link" data-scroll-target="#shiny-interlude-3"> <span class="header-section-number">1.5.1</span> Shiny Interlude #3</a></li>
+  </ul></li>
+  <li><a href="#wrap-up" id="toc-wrap-up" class="nav-link" data-scroll-target="#wrap-up"> <span class="header-section-number">1.6</span> Wrap Up</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Probability, inference, and genotype likelihoods</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="preamble" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="preamble"><span class="header-section-number">1.1</span> Preamble</h2>
+<p>In years past, Mike Miller has lectured on genotype likelihoods and genotype posteriors. This year, however, we all got to hear from Mike about the coalescent, which is an incredibly important topic in conservation genomics. So, I will spend a little more time talking about genotype likelihoods and “probabilistic genotype calling.”</p>
+<p>But, I want to talk about these topics in the context of a little background on Bayesian statistics and Markov chain Monte Carlo.</p>
+<p>So, my plan for this session is to start with a simple exercise of estimating an allele frequency in a Bayesian manner.</p>
+<p>First, we’ll talk about estimating the allele frequencies alone:</p>
+<ol type="1">
+<li>Introduce acyclic directed graphs (DAGs)</li>
+<li>Talk about proportionality to the joint probability (a nice perspective)</li>
+<li>Show what inference of allele frequencies looks like if you know the genotypes exactly. (We have a Shiny App for that!)</li>
+<li>Talk about how we could learn about the posterior by simulating values from it. Whether they were correlated (MCMC) or not (vanilla Monte Carlo).</li>
+</ol>
+<p>After that we will put another layer into the model:</p>
+<ol type="1">
+<li>Add in the idea that genotypes are not observed directly, but rather underlie counts of reads of different alleles.</li>
+<li>Show that computing the posterior distribution in this case is much more complicated.</li>
+<li>Provide an intuitive explanation of how MCMC works in this case</li>
+<li>Talk a little bit about what MCMC is</li>
+<li>Let everyone explore genotype likelihoods and posteriors from simulated sequencing read data in another Shiny App.</li>
+</ol>
+<p>Finally, we have one last Shiny App to play with that I hope will help people to understand what is meant by the phrase, “propagate uncertainty about genotypes into downstream inferences.”</p>
+</section>
+<section id="bayesian-inference" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="bayesian-inference"><span class="header-section-number">1.2</span> Bayesian Inference</h2>
+<section id="personal-probability" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="personal-probability"><span class="header-section-number">1.2.1</span> Personal Probability</h3>
+<p>To understand the Bayesian paradigm, it is useful to start with the awareness that everyone has their own probabilities for events or outcomes, and these probabilities are informed by each person’s experience, their prior beliefs, the data that they have access to, and the inferential perspectives or <em>models</em> that they can bring to the task of understanding and incorporating the information that they have available.</p>
+<p>Wait! What kind of crazy notion of probability is this? Many of us might be familiar with the idea of probability being interpretable as the long-run average frequency of outcomes if a particular event is repeated many times. But this “personal probability” paradigm sounds quite different…</p>
+<p>A good way to approach this is with some simple card play. If I hand out cards from a shuffled deck to five people in the room and tell them not to look at the cards, and then ask everyone what the probability is that the next card on the deck is the ace of spades, most everyone will have the same probability for that. But if we let the 5 people look at their cards and then ask each, in turn, what they now think is the probability that the top card is the ace of spades, they will likely update their beliefs based on the card that they possess, as well as the responses of any cardholders before them.</p>
+<p>There a lot of assumptions that go into these calculations. What are they?</p>
+<p>At any rate, it is easy to see that people have different probabilities for the top card being an ace of spades depending on how much information they have.</p>
+</section>
+<section id="probability-as-a-measuring-stick-for-uncertainty" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="probability-as-a-measuring-stick-for-uncertainty"><span class="header-section-number">1.2.2</span> Probability as a “Measuring Stick” for Uncertainty</h3>
+<p>A big switch being made here is that we are now using probability as a way of expressing or measuring each person’s “uncertainty” about an event. This is quite a departure from thinking about probability only as a property that can be discussed in connection with events that we can envision happening multiple time (so that we might derive a notion of probability as the average frequency of occurrence over very many trials.)</p>
+<p>This interpretation of probability is considerably more flexible than the “frequentist” interpretation, and it is also already familiar to most of us: we are already quite comfortable with being told that the probability it is going to rain today is 30%, even though there will only ever be one today. With probability as a measure of uncertainty, you can use probabilities to talk about things that will only happen once. What is the probability that:</p>
+<ul>
+<li>There will be three more category 5 hurricanes this season?</li>
+<li>Next year will be the hottest on record?</li>
+</ul>
+<p>Not only that, but now we can use probability to make statements about how uncertain we are about things that are deterministic. For example:</p>
+<ul>
+<li>What is your probability that Monrovia is the capital of Liberia?</li>
+</ul>
+<p>So, if we are trying to measure:</p>
+<ul>
+<li>height, then we use centimeters,</li>
+<li>mass, then we use kilograms,</li>
+<li>electrical resistance, we use Ohms</li>
+<li>uncertainty?…we use probability…</li>
+</ul>
+</section>
+<section id="an-interesting-digression" class="level3" data-number="1.2.3">
+<h3 data-number="1.2.3" class="anchored" data-anchor-id="an-interesting-digression"><span class="header-section-number">1.2.3</span> An interesting digression</h3>
+<p>Probability as a field of mathematical study did not necessarily “grow up” with the intent to be a way to measure uncertainty. (It partly grew out of contemplation of “Borel subsets” and many much more esoteric concepts.) But the way that it was developed as a mathematical construct turns out to be precisely what is required if we desired to extend the system of logic in which 1 means “absolutely true” and 0 means “absolutely false” to a logical system in which there could be degrees of uncertainly between 0 and 1.</p>
+</section>
+<section id="updating-beliefs" class="level3" data-number="1.2.4">
+<h3 data-number="1.2.4" class="anchored" data-anchor-id="updating-beliefs"><span class="header-section-number">1.2.4</span> Updating Beliefs</h3>
+<p>A characteristic feature that we saw playing our card game is that when new information arrives, people update their beliefs, and hence they update their degree of undertainty (their probabilites…).</p>
+<p>Clearly, if we want to be Bayesians and use probability to express uncertainty about things, we need a coherent, reasonable way to update our beliefs. This is done using basic principles from probability, which were described (for inferential purposes) by the Reverend Thomas Bayes (born 1702), and is hence known as Bayes’ Law, or Bayes Theorem.</p>
+<p>Bayes Theorem is typically expressed in an equation that probably feels pretty opaque to most people (it certainly did to me when I was a young biology graduate student.) I remembered seeing it something like this: suppose that you have observed some data <span class="math inline">\(D\)</span>, and that you have <span class="math inline">\(k\)</span> different hypotheses for its occurrence, and for each hypothesis, <span class="math inline">\(i\)</span>, you can compute <span class="math inline">\(P(D|H_i)\)</span> the probability of observing D given that hypothesis <span class="math inline">\(i\)</span> is true.</p>
+<p>The posterior probability of a certain hypothesis <span class="math inline">\(H_i\)</span> given <span class="math inline">\(D\)</span> is then:</p>
+<p><span class="math display">\[
+P(H_i|D) = \frac{P(D|H_i)P(H_i)}{\sum_{j = 1}^k P(D|H_j)P(H_j)}
+\]</span></p>
+<p>Yack! Let’s see if we can find an easier way to talk about this!</p>
+<p>We will (at least I hope it will be easier) and we will do so while talking about a simple problem that we can build upon to make more complex models: estimating the frequency of an allele in a population.</p>
+</section>
+<section id="a-simple-conditional-probability-and-dags" class="level3" data-number="1.2.5">
+<h3 data-number="1.2.5" class="anchored" data-anchor-id="a-simple-conditional-probability-and-dags"><span class="header-section-number">1.2.5</span> A Simple Conditional Probability and DAGs</h3>
+<p>Almost all of the probabilities that we talk about routinely are <em>conditional probabilities</em>. That is, they are probabilities that are expressed conditional on some other variable or thing taking a certain value.</p>
+<p>Here we will start beating to death an example that involves genotype and allele frequencies, but bear with us, because we will end up using what we learn from this example—and building upon it—throughout this lecture.</p>
+<p>If we ask about the probability that an individual is homozygous for the <span class="math inline">\(A\)</span> allele, we might first have to make an assumption that the population is in Hardy-Weinberg equilibrium, and then we also need to assess this probability <em>conditional on</em> the frequency of the <span class="math inline">\(A\)</span> allele being <span class="math inline">\(p_A\)</span> in the population.</p>
+<p>So, we could write:</p>
+<p><span class="math display">\[
+P(\mbox{Individual is AA}~|~p_A) = p_A^2
+\]</span></p>
+<p>If we knew the value of <span class="math inline">\(p_A\)</span>, then it would be easy to do this calculation. This is an example of probability “running forward”. We will see later that when we want to do inference we need to “run probability backward” (which is what Bayes’ Theorem lets us do.)</p>
+<p>Recall that HWE means that the allelic type of the two gene copies carried in an individual are conditionally independent given the allele frequency. Hence, the probability of drawing the first gene copy as an A is <span class="math inline">\(p_A\)</span>, and the probability that the second gene copy is drawn as an A (given that the first was an <span class="math inline">\(A\)</span>), is also <span class="math inline">\(p_A\)</span>. So the probability that the individual is <span class="math inline">\(AA\)</span> is the product of those: <span class="math inline">\(p_A^2\)</span>.</p>
+<p>We can draw a diagram of that called an acyclic directed graph (or DAG). These are very helpful for visualizing models as they become more complex.</p>
+<p><img src="diagrams/simple1.png" class="img-fluid"></p>
+<p>The key thing to know about DAGs is that they express the factorization of the joint probability of the variables into a product of conditional probabilities. (Specifically a product over nodes of the probability of each node conditional on its parents.)</p>
+<p>From the way the DAG is drawn above, it is clear that we can say:</p>
+<p><span class="math display">\[
+P(\mbox{Individual is AA}~|~p_A) = P(Y_1 = A~|~p_A) P(Y_2 = A~|~p_A) = p_A \cdot p_A =  p_A^2
+\]</span></p>
+<p>Here is a quick summary of DAGs:</p>
+<p><img src="slide_grabs/dag-notes.png" class="img-fluid"></p>
+</section>
+<section id="a-picture-of-inference-of-allele-frequencies-from-a-sample-of-genotypes" class="level3" data-number="1.2.6">
+<h3 data-number="1.2.6" class="anchored" data-anchor-id="a-picture-of-inference-of-allele-frequencies-from-a-sample-of-genotypes"><span class="header-section-number">1.2.6</span> A Picture of Inference of Allele Frequencies From a Sample of Genotypes</h3>
+<p>The previous discussion assumed that the allele frequency was known, and we wanted to compute the probability of an individual’s (unknown) genotype. For that exercise, we were running from an observed node in the graph (<span class="math inline">\(p_A\)</span>) to two unobserved ones. This is a straightforward calculation of probabilities.</p>
+<p>Much of the time in science, we are able to observe the variables at the end of the arrows in a DAG, and we want to make inferences about the variables that are “upstream” of them in a DAG. For an example, let us consider the situation in which we sample <span class="math inline">\(N\)</span> diploids and observe their genotypes, and from that we want to infer the allele frequency <span class="math inline">\(p_A\)</span>.</p>
+<p>The DAG for this situation looks like this:</p>
+<p><img src="diagrams/infer1.png" class="img-fluid"></p>
+<p>From which it is immediately apparent that the probability of all the data, say <span class="math inline">\(\boldsymbol{Y} = (Y_{1,1}, Y_{1,2}, Y_{2,1}, \ldots, Y_{N,1}, Y_{N,2})\)</span> is just a simple product of Bernoulli random variables:</p>
+<p><span class="math display">\[
+P(\boldsymbol{Y}~|~p_A) = \prod_{i=1}^N P(Y_{i,1}~|~p_A)P(Y_{i,2}~|~p_A)
+\]</span></p>
+<p>In fact, if we define each <span class="math inline">\(Y\)</span> to be 0 or 1 as follows:</p>
+<p><span class="math display">\[
+\begin{align}
+Y = 0 &amp; ~~~~~\mbox{with probability} ~~~ 1 - p_A &amp; ~~\mbox{(i.e., it's an}~a) \\
+Y = 1 &amp; ~~~~~\mbox{with probability} ~~~ p_A &amp; ~~\mbox{(i.e., it's an}~A)
+\end{align}
+\]</span></p>
+<p>Then it is not too hard to see that</p>
+<p><span class="math display">\[
+P(\boldsymbol{Y}~|~p_A) = p_A^{\sum Y_{i,j}} (1- p_A)^{2N - \sum Y_{i,j}}
+\]</span></p>
+<p>This is a probability function. But if you consider this as a function of <span class="math inline">\(p_A\)</span> with <span class="math inline">\(\boldsymbol{Y}\)</span> considered as fixed, then it is often referred to as the <em>likelihood function</em>.</p>
+</section>
+<section id="methods-of-inference" class="level3" data-number="1.2.7">
+<h3 data-number="1.2.7" class="anchored" data-anchor-id="methods-of-inference"><span class="header-section-number">1.2.7</span> Methods of Inference</h3>
+<p>We see that we are trying to learn something (make inference) about <span class="math inline">\(p_A\)</span> (an unshaded/unobserved variable) that is upstream of our observed data. This is inference.</p>
+<p>To put some concrete numbers on this. Let’s say that <span class="math inline">\(N = 100\)</span> diploids, and out of the 200 gene copies, 73 of them were <span class="math inline">\(A\)</span> alleles.</p>
+<p>There are lots of ways that you might do inference. Here are a few:</p>
+<ul>
+<li><em>Method of the Eyeball</em>: Look at your sample and surmise that the fraction of A alleles in the sample is a good estimate of the fraction of <span class="math inline">\(A\)</span> alleles in the population.</li>
+<li><em>Method of Moments</em>: This formalizes the “Method of the Eyeball” by equating the sample mean with the population mean.</li>
+<li><em>Method of Maximum Likelihood</em>: Find the value of <span class="math inline">\(p_A\)</span> that maximizes the probability of observing your sample. In other words, consider the probability <span class="math inline">\(P(\boldsymbol{Y}~|~p_A)\)</span> as a function of <span class="math inline">\(p_A\)</span>, where the data, <span class="math inline">\(\boldsymbol{Y}\)</span>, are fixed, and then find the value of <span class="math inline">\(p_A\)</span> that maximises that <em>likelihood</em> function.</li>
+</ul>
+<p>All of those methods give you a <em>point estimate</em> for <span class="math inline">\(p_A\)</span>. An alternative to these methods is to be Bayesian and find the <em>posterior distribution</em> for <span class="math inline">\(p_A\)</span> conditional on the data, <span class="math inline">\(\boldsymbol{Y}\)</span>.</p>
+<p>Before we do this, we are going to want to review a view simple facts about marginal, conditional, and joint probabilities.</p>
+</section>
+<section id="some-important-probability-rules" class="level3" data-number="1.2.8">
+<h3 data-number="1.2.8" class="anchored" data-anchor-id="some-important-probability-rules"><span class="header-section-number">1.2.8</span> Some important probability rules</h3>
+<p>If you have two different events <span class="math inline">\(A\)</span> (no relation, necessarily, to the big-A allele ) and <span class="math inline">\(B\)</span>, and we use <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> to refer to the outcome of each, then here are some things that are always true:</p>
+<ul>
+<li><span class="math inline">\(P(A)\)</span> and <span class="math inline">\(P(B)\)</span> are referred to as marginal probabilities.</li>
+<li>The joint probability of <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> is the probability that those two outcomes occurred, and it can be computed as the product of a marginal probability and a conditional probability, in two different ways:</li>
+</ul>
+<p><span class="math display">\[
+P(A,B) = P(A)P(B~|~A) = P(B)P(A~|~B)
+\]</span></p>
+<ul>
+<li>This means that conditional probabilities can be computed from the joint probability:</li>
+</ul>
+<p><span class="math display">\[
+P(A~|~B) = \frac{P(A,B)}{P(B)}~~~~~~~~~~~~~~~~~~~~~~~~
+P(B~|~A) = \frac{P(A,B)}{P(A)}
+\]</span></p>
+<p>And that leads us to an expression for Bayes Theorem that I find easier to grok out:</p>
+<p><span class="math display">\[
+P(A~|~B) \propto P(A, B)
+\]</span></p>
+<p>where we are thinking of <span class="math inline">\(P(A|B)\)</span> as a function of <span class="math inline">\(A\)</span> with <span class="math inline">\(B\)</span> fixed. It is typically easy to compute the joint probability, <span class="math inline">\(P(A,B)\)</span>, and then you just have to remember that <span class="math inline">\(P(A~|~B)\)</span>, since it is a probability on <span class="math inline">\(A\)</span>, must sum to one over all possible values of <span class="math inline">\(A\)</span>.</p>
+<p>The same is true for:</p>
+<p><span class="math display">\[
+P(B~|~A) \propto P(A, B)
+\]</span></p>
+</section>
+<section id="bayesian-inference-for-p_a" class="level3" data-number="1.2.9">
+<h3 data-number="1.2.9" class="anchored" data-anchor-id="bayesian-inference-for-p_a"><span class="header-section-number">1.2.9</span> Bayesian Inference for <span class="math inline">\(p_A\)</span></h3>
+<p>Back to our simple example. If we want to do Bayesian inference for <span class="math inline">\(p_A\)</span> we see that we will want to compute the <em>posterior probability</em>:</p>
+<p><span class="math display">\[
+P(p_A|\boldsymbol{Y})
+\]</span></p>
+<p>which we now know is going to be proportional to the <em>joint probability</em>:</p>
+<p><span class="math display">\[
+P(p_A,\boldsymbol{Y})
+\]</span></p>
+<p>and what we currently have at our disposal is the <em>likelihood</em>:</p>
+<p><span class="math display">\[
+P(\boldsymbol{Y}~|~p_A)
+\]</span></p>
+<p>We could get the joint probability by using the likelihood in the product:</p>
+<p><span class="math display">\[
+P(p_A,\boldsymbol{Y}) = P(\boldsymbol{Y}~|~p_A) P(p_A)
+\]</span></p>
+<p>But what is this <span class="math inline">\(P(p_A)\)</span>?!</p>
+<p>It is the <em>prior distribution</em> for <span class="math inline">\(p_A\)</span>. It is a necessary ingredient to be able to use the likelihood to compute the joint probability (and, hence, the posterior probability), and we envision it as a probability distribution that expresses our degree of belief about <span class="math inline">\(p_A\)</span> <em>before we look at the data</em>.</p>
+<p>Note that this all boils down verbally to: <strong>The posterior distribution is proportional to the prior times the likelihood</strong>.</p>
+</section>
+<section id="a-family-of-priors-for-p_a" class="level3" data-number="1.2.10">
+<h3 data-number="1.2.10" class="anchored" data-anchor-id="a-family-of-priors-for-p_a"><span class="header-section-number">1.2.10</span> A family of priors for <span class="math inline">\(p_A\)</span></h3>
+<p>Since <span class="math inline">\(p_A\)</span> is a proportion, an obvious choice for prior would be a beta distribution. The beta distribution gives a continuous prior distribution on a value that is between 0 and 1. It has two parameters, often called <span class="math inline">\(\alpha_1\)</span> and <span class="math inline">\(\alpha_2\)</span>. Here are some examples:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="probinf_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The beta density for a random variable <span class="math inline">\(X\)</span> has the form:</p>
+<p><span class="math display">\[
+p(x | \alpha_1, \alpha_2) = \frac{\Gamma(\alpha_1 + \alpha_2)}{\Gamma(\alpha_1)\Gamma(\alpha_2)}
+x^{\alpha_1 - 1}(1-x)^{\alpha_2 - 1}
+\]</span></p>
+<p>The part that looks hairy is a few Gamma functions. Don’t worry about those—it is a constant. The important part (the “kernel”, as they say…) is:</p>
+<p><span class="math display">\[
+x^{\alpha_1 - 1}(1-x)^{\alpha_2 - 1}
+\]</span></p>
+<p>Or, if we wanted this to a be a prior on <span class="math inline">\(p_A\)</span>, the prior would be proportional to:</p>
+<p><span class="math display">\[
+{p_A}^{\alpha_1 - 1}(1-p_A)^{\alpha_2 - 1}
+\]</span></p>
+<p>And, if we wanted to be even more specific, we could choose <span class="math inline">\(\alpha_1 = \alpha_2 = 1\)</span> to give ourselves a uniform prior which is proportional to 1:</p>
+<p><span class="math display">\[
+P(p_A) \propto {p_A}^{1 - 1}(1-p_A)^{1 - 1} = {p_A}^{0}(1-p_A)^{0} = 1
+\]</span></p>
+</section>
+<section id="a-graphical-aside" class="level3" data-number="1.2.11">
+<h3 data-number="1.2.11" class="anchored" data-anchor-id="a-graphical-aside"><span class="header-section-number">1.2.11</span> A Graphical Aside</h3>
+<p>Just wanting to point out that if you want to be a Bayesian, you can’t have any unobserved nodes on your DAG that don’t have any parents. Those priors that you use/accept/assume are always the uppermost nodes in a DAG. I usually use gray nodes to denote them. For example, here is the DAG for the Bayesian version of the previously shown DAG:</p>
+<p><img src="diagrams/infer1-with-prior.png" class="img-fluid"></p>
+</section>
+<section id="the-posterior-for-p_a" class="level3" data-number="1.2.12">
+<h3 data-number="1.2.12" class="anchored" data-anchor-id="the-posterior-for-p_a"><span class="header-section-number">1.2.12</span> The posterior for <span class="math inline">\(p_A\)</span></h3>
+<p>Now that we have a choice for our prior, <span class="math inline">\(P(p_A)\)</span>, we can easily find something that is proportional to the posterior distribution. What is proportional to the posterior distribution? Remember, <strong>The posterior distribution is proportional to the prior times the likelihood</strong> (which, don’t forget, is the <em>joint</em> probability). Remember that the likelihood looks like:</p>
+<p><span class="math display">\[
+P(\boldsymbol{Y}~|~p_A) = p_A^{\sum Y_{i,j}} (1- p_A)^{2N - \sum Y_{i,j}}
+\]</span></p>
+<p>And, in our example, the number of <span class="math inline">\(A\)</span> alleles is 73 (out of 200), so <span class="math inline">\(\sum Y_{i,j} = 73\)</span> and <span class="math inline">\(2N - \sum Y_{i,j} = 127\)</span>.</p>
+<p>Since we are only going to worry about finding something that the posterior probability is proportional to, we can drop any constants and we get this for the prior times the likelihood:</p>
+<p><span class="math display">\[
+\begin{align}
+P(p_A~|~\boldsymbol{Y}) &amp;\propto {p_A}^{0}(1-p_A)^{0} \times p_A^{73}(1-p_A)^{127} \\
+  &amp; \propto p_A^{73}(1-p_A)^{127} \\
+  &amp; \propto p_A^{74 - 1}(1-p_A)^{128 - 1} \\
+\end{align}
+\]</span></p>
+<p>which is precisely the kernel of a beta distribution with parameters 74 and 128.</p>
+<p>Aha! So, the posterior here is a beta distribution with <span class="math inline">\(\alpha_1 = 74\)</span> and <span class="math inline">\(\alpha_2 = 128\)</span>. We can plot that if we want:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="probinf_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="shiny-interlude-1" class="level3" data-number="1.2.13">
+<h3 data-number="1.2.13" class="anchored" data-anchor-id="shiny-interlude-1"><span class="header-section-number">1.2.13</span> Shiny Interlude #1</h3>
+<p>In fact, we can do one better than just plotting that. I’ve prepared a Shiny Notebook that lets you play with different values of the allele frequency (<span class="math inline">\(p_T\)</span> in this case—the frequency of the <span class="math inline">\(T\)</span> base at a genome position), simulate diploid genotype data from that, and then compute the posterior distribution, whilst fiddling with the prior parameters, if desired.</p>
+<p>The one downside of Shiny apps is that they don’t run properly on the RStudio Server that has been set up for ConGen. Nor will they run properly in the Remote Desktop version of the same.</p>
+<p>But this is not a huge issue, since you should be able to run it on your own computer with RStudio. The procedure for that is:</p>
+<ol type="1">
+<li>Go to the Eric Anderson folder on the ConGen Box drive: <a href="https://umt.box.com/s/n3x7v1hpqkf4h9glu41whxrqaostoqva">https://umt.box.com/s/n3x7v1hpqkf4h9glu41whxrqaostoqva</a></li>
+<li>Right click (on a mac Cntrl-click) the top folder called <code>ngs-genotype-models</code>, and choose “Download” from the pop-up menu. Or you might be able to click on the three dots to the right of that file and choose download.</li>
+<li>That downloads the whole folder as a zip archive. Unzip the whole thing to a directory called <code>ngs-genotype-models</code> on your computer.</li>
+<li>Go inside that folder and double click <code>ngs-genotype-models.Rproj</code> to open the RStudio project.</li>
+<li>Within RStudio, open <code>001-allele-freq-estimation.Rmd</code></li>
+<li>Install any packages RStudio says you might need.</li>
+<li>Then choose “Run Document” at the top of the source editor window.</li>
+</ol>
+<p>You can also download it from GitHub, if you find that easier:</p>
+<ul>
+<li><a href="https://github.com/eriqande/ngs-genotype-models">https://github.com/eriqande/ngs-genotype-models</a></li>
+</ul>
+<p><strong>If that does not work for some of the students</strong>: you can go directly to the website: <a href="https://eriqande.shinyapps.io/001-allele-freq-estimation/">https://eriqande.shinyapps.io/001-allele-freq-estimation/</a>. But, be warned that if too many people use that link it will overwhelm my free ShinyApps account.</p>
+<p>Now, I am going to break students into break-out groups of 4 or 5 (randomly) for about 15 minutes.</p>
+<p>Take a few minutes to introduce yourselves to one another, then play with the Shiny app and talk to one another about it as you do. Maybe even work togethery to do these things:</p>
+<ul>
+<li>Input beta distribution parameters to get these different shapes:
+<ul>
+<li>an upward facing U</li>
+<li>a flat line</li>
+<li>a curve that keeps going up at one of the boundaries</li>
+<li>a hill with a peak at 0.3</li>
+</ul></li>
+<li>Observe how the posterior distribution changes when sample size changes.</li>
+<li>With a true allele frequency of <span class="math inline">\(p_T = 0\)</span>, with a sample size of 50 diploids, find values of the prior parameters that will give you a posterior centered on 0.5 (in other words a ridiculously heavy prior…)</li>
+</ul>
+<p>I’ll try to say hello in the different break out rooms.</p>
+</section>
+<section id="to-the-bayesian-the-posterior-distribution-is-everything" class="level3" data-number="1.2.14">
+<h3 data-number="1.2.14" class="anchored" data-anchor-id="to-the-bayesian-the-posterior-distribution-is-everything"><span class="header-section-number">1.2.14</span> To the Bayesian, the posterior distribution is everything</h3>
+<p>To the Bayesian, the posterior distribution contains all the information that the data has about the parameter to be estimated—in this case, <span class="math inline">\(p_A\)</span>. And, the full posterior distribution, unsummarized, expresses that all that information as fully as can be done.</p>
+<p>However, sometimes you don’t want to carry around a full posterior distribution, especially if it is a distribution on multiple variables (multidimensional).</p>
+<p>Often you will want to summarise the posterior distribution.</p>
+</section>
+<section id="some-standard-ways-of-summarizing-the-posterior" class="level3" data-number="1.2.15">
+<h3 data-number="1.2.15" class="anchored" data-anchor-id="some-standard-ways-of-summarizing-the-posterior"><span class="header-section-number">1.2.15</span> Some standard ways of summarizing the posterior</h3>
+<ol type="1">
+<li>The posterior mean. Gives a point estimate that minimizes squared error posterior loss.</li>
+<li>The posterior median. Gives a point estimate that minimizes absolute posterior loss.</li>
+<li>The posterior mode. Gives a point estimate that minimizes 0-1 posterior loss.</li>
+<li>The Bayesian Credible Interval: provides an interval estimator. Like a confidence interval, but infinitely easier to interpret correctly…</li>
+</ol>
+</section>
+</section>
+<section id="monte-carlo-sampling-from-a-posterior-distribution" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="monte-carlo-sampling-from-a-posterior-distribution"><span class="header-section-number">1.3</span> Monte Carlo sampling from a posterior distribution</h2>
+<p>In the above segment, we obtained a posterior distribution analytically. That is not the way things typically work out. It is more common that one is not able to obtain the posterior analytically, but, rather, can only obtain a <em>sample</em> from the posterior distribution. With a sample from the posterior, however, it is possible to use Monte Carlo to approximate virtually any quantity that might be of interest. Let’s look at that with our simple example.</p>
+<section id="a-vanilla-monte-carlo-sample-from-the-posterior-for-p_a" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="a-vanilla-monte-carlo-sample-from-the-posterior-for-p_a"><span class="header-section-number">1.3.1</span> A “vanilla” Monte Carlo sample from the posterior for <span class="math inline">\(p_A\)</span></h3>
+<p>Even though we can compute the posterior analytically, it can still be convenient to obtain a sample from it. We can sample 1 million values from the posterior for <span class="math inline">\(p_A\)</span> like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pA <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="at">n =</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>, <span class="dv">74</span>, <span class="dv">128</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The first 10 values of that sample look like:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pA[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 0.3518184 0.3544997 0.3716785 0.3488641 0.3558589 0.3021938 0.3977203
+ [8] 0.3763170 0.3022267 0.3416964</code></pre>
+</div>
+</div>
+<p>We call this a “vanilla” Monte Carlo sample because every member of the sample was independent—this is not <em>Markov chain</em> Monte Carlo.</p>
+<p>If we wanted to use the sample to approximate the full posterior, we could do that with a histogram:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(pA, <span class="at">breaks =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="probinf_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>If we want the posterior mean, that is easy, too:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(pA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3663246</code></pre>
+</div>
+</div>
+<p>as is the posterior median:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(pA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3658519</code></pre>
+</div>
+</div>
+<p>Or the standard deviation of the posterior distribution:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(pA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.03379792</code></pre>
+</div>
+</div>
+<p>Or, the 90%-equal-tail Credible Interval</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(pA, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       5%       95% 
+0.3114627 0.4227282 </code></pre>
+</div>
+</div>
+<p>All of those quantities could have been obtained analytically in this case, but it is a lot simpler to just work with a Monte Carlo sample because the operations are the same with every Monte Carlo sample (which is not necessarily true of every analytical distribution…).</p>
+</section>
+<section id="transformations-are-simple-with-a-monte-carlo-sample" class="level3" data-number="1.3.2">
+<h3 data-number="1.3.2" class="anchored" data-anchor-id="transformations-are-simple-with-a-monte-carlo-sample"><span class="header-section-number">1.3.2</span> Transformations are simple with a Monte Carlo sample</h3>
+<p>Imagine for a moment that what you really wanted to estimate was the probability that, if you sampled three individuals, in sequence, from the population, the first one would be homozygous <span class="math inline">\(AA\)</span>, the second one would be heterozygous <span class="math inline">\(Aa\)</span> and the third one would be homozygous <span class="math inline">\(aa\)</span>. Since we are being Bayesians here, we will want to compute the posterior distribution of that probability given the observed data. This is something that would be quite messy to do analytically, but it is easy to use the Monte Carlo sample to do it. Clearly, for a given <span class="math inline">\(p_A\)</span>, the probability of the sequence (<span class="math inline">\(AA\)</span>, <span class="math inline">\(Aa\)</span>, <span class="math inline">\(aa\)</span>) is <span class="math inline">\(p_A^2\times 2 p_A (1-p_A) \times (1-p)^2\)</span>. So, the posterior distribution of that quantity is simply:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>three_geno_seq_posterior <span class="ot">&lt;-</span> pA<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> <span class="dv">2</span> <span class="sc">*</span> pA <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> pA) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> pA)<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And we can look at it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(three_geno_seq_posterior, <span class="at">breaks =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="probinf_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="probcall" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="probcall"><span class="header-section-number">1.4</span> Probabilistic Genotype Calling / Allele frequency estimation</h2>
+<p>We are now going to expand our allele frequency model just a little bit, to get a taste for how we might infer both allele frequencies and genotypes given short read data.</p>
+<p>Let’s consider this setup: we are trying to infer genotypes in individuals and estimate the allele frequencies in a population at a SNP in which the variants are the two different bases, <span class="math inline">\(C\)</span> or <span class="math inline">\(T\)</span>. We know where the SNP occurs (we are disregarding the problem of inferring whether a SNP is there) but we do not know its frequency in the population. We have sequenced <span class="math inline">\(N\)</span> individuals at this SNP. We don’t know the genotype of any of these individuals, but we get to observe the number of sequencing reads on each individual, <span class="math inline">\(i\)</span>, that contain a <span class="math inline">\(C\)</span>, and the number of reads that contain a <span class="math inline">\(T\)</span> at the site. We call that observed variable <span class="math inline">\(\boldsymbol{R}_i = (R_{i,C}, R_{i,T})\)</span>, a two-vector. We include in our model a sequencing error rate <span class="math inline">\(\mu\)</span> which, for simplicity here, we will assume is known. With probability <span class="math inline">\(\mu\)</span> a read from a chromosome that really contains a <span class="math inline">\(C\)</span> at the site will report a <span class="math inline">\(T\)</span>, while with probability <span class="math inline">\(1 - \mu\)</span> the base at the site is correctly reported as a <span class="math inline">\(C\)</span>. Similarly for chromosomes that contain a <span class="math inline">\(T\)</span> at the site, with probability <span class="math inline">\(\mu\)</span> a read will report a <span class="math inline">\(C\)</span> and with probability <span class="math inline">\(1 - \mu\)</span> it will correctly report a <span class="math inline">\(T\)</span>.</p>
+<p>Here is a DAG for the model:</p>
+<p><img src="diagrams/genos-and-reads-dag.png" class="img-fluid"></p>
+<p>All right. This is fun. Now there are <em>two</em> layers of unknown variables (the <span class="math inline">\(Y\)</span>’s and <span class="math inline">\(p_C\)</span> that we will try to infer together, at the same time).</p>
+<section id="why-is-this-a-good-idea" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="why-is-this-a-good-idea"><span class="header-section-number">1.4.1</span> Why is this a good idea?</h3>
+<p>Because the allele frequency estimate is there to inform the inference of genotypes.</p>
+<p>If the frequency of the <span class="math inline">\(C\)</span> allele is quite low, that will provide a lot of evidence in the model against inferring someone to be homozygous for the <span class="math inline">\(C\)</span> allele.</p>
+<p>And this would be a good thing, because after a little bit of looking at published data sets of genotypes called by traditional means (i.e.&nbsp;apparently without considering allele frequencies), it appears there is a bit of an epidemic of genotyping error in RAD sequenced data.</p>
+</section>
+<section id="conditional-probabilities-in-the-model" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="conditional-probabilities-in-the-model"><span class="header-section-number">1.4.2</span> Conditional probabilities in the model</h3>
+<p>Most of these we have seen before:</p>
+<ul>
+<li><span class="math inline">\(P(p_C | \alpha_C, \alpha_T)\)</span> is just a beta prior on <span class="math inline">\(p_C\)</span>.</li>
+<li><span class="math inline">\(Y_{i,1}\)</span> is a Bernoulli trial with success probability (i.e.&nbsp;probability of getting a <span class="math inline">\(C\)</span> of <span class="math inline">\(p_C\)</span>.)</li>
+<li>The only new one is the probability distribution of read counts given the genotype and the genotyping error rate: <span class="math inline">\(P(\boldsymbol{R}_i~|~Y_{i,1}, Y_{i,2}, \mu)\)</span></li>
+</ul>
+</section>
+<section id="the-conditional-probability-pboldsymbolr_iy_i1-y_i2-mu" class="level3" data-number="1.4.3">
+<h3 data-number="1.4.3" class="anchored" data-anchor-id="the-conditional-probability-pboldsymbolr_iy_i1-y_i2-mu"><span class="header-section-number">1.4.3</span> The conditional probability <span class="math inline">\(P(\boldsymbol{R}_i~|~Y_{i,1}, Y_{i,2}, \mu)\)</span></h3>
+<p>This thing turns out to be pretty easy. It can be broken down into cases:</p>
+<ol type="1">
+<li><strong><span class="math inline">\(i\)</span> is homozygous for <span class="math inline">\(C\)</span> (i.e., <span class="math inline">\(Y_{i,1} = Y_{i,2} = C\)</span>):</strong> In this case, the only way to get a read with a <span class="math inline">\(T\)</span> at the site is by a sequencing error, which happens with probability <span class="math inline">\(\mu\)</span>. Thus, it is akin to drawing <span class="math inline">\(M = R_{i,C} + R_{i,T}\)</span> balls out of an urn (with replacement), a fraction <span class="math inline">\(\mu\)</span> of which say <span class="math inline">\(T\)</span> on them, the rest which say <span class="math inline">\(C\)</span> on them. In such a case <span class="math inline">\(R_{i,C}\)</span> is binomially distributed, <span class="math inline">\(M\)</span> draws with success probability <span class="math inline">\(1-\mu\)</span>.</li>
+<li><strong><span class="math inline">\(i\)</span> is homozygous for <span class="math inline">\(T\)</span> (i.e., <span class="math inline">\(Y_{i,1} = Y_{i,2} = T\)</span>):</strong> Same argument as above, <span class="math inline">\(R_{i,C}\)</span> is binomially distributed, <span class="math inline">\(M\)</span> draws with success probability <span class="math inline">\(\mu\)</span> this time, rather than <span class="math inline">\(\mu\)</span>.</li>
+<li><strong><span class="math inline">\(i\)</span> is heterozygous (i.e., <span class="math inline">\((Y_{i,1} = C, Y_{i,2} = T)\)</span> or <span class="math inline">\((Y_{i,1} = T, Y_{i,2} = C)\)</span>):</strong> Because we have assumed sequencing error rates are symmetrical between different bases, this is easily figured out—the reads are like balls you are sampling (with replacement) from an Urn in which half of the balls are <span class="math inline">\(T\)</span>’s and half of them are <span class="math inline">\(C\)</span>’s.</li>
+</ol>
+<p>Note that when this probability is considered a function of the genotype, (with the observed reads treated as fixed), it is know as the <em>genotype likelihood</em>:</p>
+<p><span class="math display">\[
+L(Y_{i,1}, Y_{i,2}; \boldsymbol{R}_i, \mu) = P(\boldsymbol{R}_i~|~Y_{i,1}, Y_{i,2}, \mu)
+\]</span></p>
+<p>An easier way to see this might be a picture:</p>
+<p><img src="figures/genotypes_and_reads.svg" class="img-fluid"></p>
+<p><em>Genotype likelihoods</em> are measures of how much support the <em>read</em> data gives to the three possible genotypes (<span class="math inline">\(CC\)</span>, <span class="math inline">\(CT\)</span>, or <span class="math inline">\(TT\)</span>, in this case).</p>
+<p>They are a critical ingredient for using read information for doing population genomics, but they are only part of the story.</p>
+</section>
+<section id="some-of-the-assumptions-in-the-above-model" class="level3" data-number="1.4.4">
+<h3 data-number="1.4.4" class="anchored" data-anchor-id="some-of-the-assumptions-in-the-above-model"><span class="header-section-number">1.4.4</span> Some of the assumptions in the above model…</h3>
+<p>There are quite a few but the biggest is that each read is independent of the others. That assumption would be violated if:</p>
+<ul>
+<li>the sequences upon which the <span class="math inline">\(C\)</span> (or the <span class="math inline">\(T\)</span>) occurred were somehow subject to greater amplification during any PCR steps, or were more likely to attach to “the lawn” on an Illumina machine.</li>
+<li>there are PCR duplicates. This can be a really big issue for RAD methods that don’t have a good mechanism for filtering PCR duplicates.</li>
+</ul>
+</section>
+<section id="an-intuitive-picture-of-how-monte-carlo-might-proceed" class="level3" data-number="1.4.5">
+<h3 data-number="1.4.5" class="anchored" data-anchor-id="an-intuitive-picture-of-how-monte-carlo-might-proceed"><span class="header-section-number">1.4.5</span> An intuitive picture of how Monte Carlo might proceed</h3>
+<p>The unobserved genotypes of the individuals in the above model are what are sometimes called “missing data”. They are not missing data in the sense of small holes in your data set that resulted from some data-collection failure. They are missing in the sense of “What is missing here is something that would make this whole problem easier”. Clearly, as we showed in an earlier section, if we knew these genotypes exactly, doing Bayesian inference for <span class="math inline">\(p_C\)</span> is pretty darn easy.</p>
+<p>Another name for this “missing data” is “latent variables.” Many formulations of MCMC are developed with these types of latent variables. In our case, a brief sketch of how MCMC would proceed starts with a bit of wishful thinking. We say, “Wouldn’t it be great if we actually knew the value of <span class="math inline">\(p_C\)</span>…Hey! We don’t, but let’s just start with a guess and pretend it is true.” So, we would start by initializing the model and setting <span class="math inline">\(p_C\)</span> to some random value, let us call that value <span class="math inline">\(p_C^{(0)}\)</span>.</p>
+<p>Now, if we know the value of <span class="math inline">\(p_C\)</span>, then the only thing that would be left unknown in the model would be the genotypes of the individuals. But looking at the graph it is clear that they are all conditionally indendent given <span class="math inline">\(p_C^{(0)}\)</span> and the observed read depths. So, pretending that <span class="math inline">\(p_C^{(0)}\)</span> is the truth, we could compute, for each individual <span class="math inline">\(i\)</span>, the posterior probabilities of <span class="math inline">\(i\)</span>’s genotype (the three cases, 1–3 above). (By the way, this distribution is often called the “full conditional distribution”).</p>
+<p>Then we would simulate values of the genotypes from those posterior distributions. Aha! once we have those simulated, we can pretend that they are real and use them to come up with a new estimate of <span class="math inline">\(p_C\)</span> by computing the posterior distribution (full conditional) for <span class="math inline">\(p_C\)</span> given the current values of the genotypes and then simulating a value from that distribution. Call that <span class="math inline">\(p_C^{(1)}\)</span>, and then go back to simulating new values for the genotypes.</p>
+<p>Doing that over and over again creates a Markov chain that does a random walk over the space of all possible genotypes of the <span class="math inline">\(i\)</span> individuals and the unknown allele frequency <span class="math inline">\(p_C\)</span>, with the amount of time the chain spends in any state being <em>proportional to the posterior probability of that state!</em>.</p>
+<p>This is actually Markov chain Monte Carlo.</p>
+</section>
+<section id="what-is-the-markov-chain-part-of-mcmc" class="level3" data-number="1.4.6">
+<h3 data-number="1.4.6" class="anchored" data-anchor-id="what-is-the-markov-chain-part-of-mcmc"><span class="header-section-number">1.4.6</span> What is the Markov Chain part of MCMC?</h3>
+<p>We’ve seen that Monte Carlo in this Bayesian context is all about basing one’s inference on a <em>sample</em> from the posterior distribution. However, it turns out that you often can’t obtain <em>independent</em> samples from a complex posterior distribution. In high dimensions that is just not possible. But, it <em>is</em> possible to construct an ergodic Markov chain that has as its limiting distribution the posterior distribution you want to be sampling from. In fact, that is what our “wishful thinking” procedure with the “missing data”, described above, is actually doing.</p>
+<p>What?!</p>
+<p>OK, we will talk briefly about Markov chains. Basically a Markov chain is a stochastic process (like a random walk) in which the probability of ending up in some place after the next step depends only on where it currently is—not on how it got there…</p>
+<p>A classic example is a random walk, we will consider one with scattering boundaries:</p>
+<p><img src="slide_grabs/random-walk.png" class="img-fluid"></p>
+<p>The important take-home message from the <code>tpm</code> Computer Demo is that if you run a Markov chain long enough, it spends time in different states with a predictable pattern called the limiting distribution. In other words, you can take a sample of the states visited by the chain and use that as a Monte Carlo sample. That is Markov chain Monte Carlo.</p>
+</section>
+<section id="why-mcmc-is-so-great-for-bayesians" class="level3" data-number="1.4.7">
+<h3 data-number="1.4.7" class="anchored" data-anchor-id="why-mcmc-is-so-great-for-bayesians"><span class="header-section-number">1.4.7</span> Why MCMC is so great for Bayesians</h3>
+<p>Via MCMC, it is possible to obtain samples from the posterior distribution even if the posterior distribution is highly-multidimensional and complicated.</p>
+<p>There are two main reasons for this:</p>
+<ol type="1">
+<li>A Markov chain can be devised to sample from the posterior distribution without knowing the normalizing constant. In other words, if you can compute the joint probability (prior times likelihood) for a fully-observed version of your model, that is all you need. (Note that you can pretty much always compute the joint probability for a fully-observed model.)</li>
+<li>The Markov chain so devised can be constructed by proposing changes only to small parts of the model, which makes it possible to break down complex distributions in ways that make it manageable to sample from them.</li>
+</ol>
+<p>Sadly, the details of this are beyond the scope of a 40 minute lecture and a few hands-on sessions.</p>
+</section>
+<section id="why-mcmc-can-be-not-so-great" class="level3" data-number="1.4.8">
+<h3 data-number="1.4.8" class="anchored" data-anchor-id="why-mcmc-can-be-not-so-great"><span class="header-section-number">1.4.8</span> Why MCMC can be not-so-great</h3>
+<ol type="1">
+<li>It can be computationally expensive and take a long time.</li>
+<li>It can mix poorly, i.e.&nbsp;it might not sample reliably from all areas of the distribution in proportion to (or even approximately in proportion to) their posterior probability.</li>
+<li>It can appear to be mixing well, but actually not be mixing well. It is important to perform multiple runs from different starting values to assess convergence.</li>
+<li>Especially in “canned packages” it can let you do “black-boxy” inference in models that are so complicated that it is hard to have proper intuition about how they behave or perform given the vararies of your own data.</li>
+</ol>
+<p>Again, these topics are beyond the scope of this presentation. But grab me at some point if you want to talk about it, or consider the MCMC course at the <a href="https://si.biostat.washington.edu/suminst/sisg">Summer Institute in Statistical Genetics</a>.</p>
+</section>
+<section id="playing-with-genotype-likelihoods-and-genotype-posteriors" class="level3" data-number="1.4.9">
+<h3 data-number="1.4.9" class="anchored" data-anchor-id="playing-with-genotype-likelihoods-and-genotype-posteriors"><span class="header-section-number">1.4.9</span> Playing with genotype likelihoods and genotype posteriors</h3>
+<p>The genotype likelihoods can be calculated from the read data alone.</p>
+<p>But, if we combine that with allele frequencies in our model:</p>
+<p><img src="diagrams/genos-and-reads-dag.png" class="img-fluid"></p>
+<p>…then we can also compute the posterior probability (by MCMC sampling) of each genotype. If you are sampling from a single population, then this can provide a better estimate of the true genotype.</p>
+</section>
+<section id="shiny-interlude-2" class="level3" data-number="1.4.10">
+<h3 data-number="1.4.10" class="anchored" data-anchor-id="shiny-interlude-2"><span class="header-section-number">1.4.10</span> Shiny Interlude #2</h3>
+<p>From the <code>ngs-genotype-models</code> RStudio project that you downloaded previously:</p>
+<ul>
+<li>Open <code>002-genotype-likelihoods-from-reads.Rmd</code></li>
+<li>Install any packages that RStudio tells you that you might need. (i.e.&nbsp;<code>install.packages("cowplot")</code> if need be…)</li>
+<li>Hit the “Run Document” Button</li>
+</ul>
+<p>(If this doesn’t work for you, then you can access the Shiny app over the web: <a href="https://eriqande.shinyapps.io/002-genotype-likelihoods-from-reads/">https://eriqande.shinyapps.io/002-genotype-likelihoods-from-reads/</a> )</p>
+<p>Then you can simulate genotypes, as before, but now, you can simulate reads from those genotypes, and then compute genotype posteriors using MCMC.</p>
+</section>
+<section id="back-to-breakout-roomssome-questions" class="level3" data-number="1.4.11">
+<h3 data-number="1.4.11" class="anchored" data-anchor-id="back-to-breakout-roomssome-questions"><span class="header-section-number">1.4.11</span> Back to breakout rooms…some questions:</h3>
+<ol type="1">
+<li>What are the likelihoods for the three different possible genotypes when the read depth is 0 for an individual?</li>
+<li>What does it take for the likelihood to be highest for the heterozygote hypothesis?</li>
+<li>Is it more likely that a true heterozygote genotype will have a posterior probability that is highest for the hyothesis of “common homozygote” or the hypotheses of “rare homozygote.”</li>
+<li>How does the posterior distribution of the allele frequency computed from read data (the transparent blue histogram) compare to the posterior distribution if you know the genotypes exactly (the black line)? How does this change when read depth is increased or decreased?</li>
+<li>If you only have a single read from a heterozygous individual, will that individual’s maximum likelihood genotype ever be “heterozygote.” What about its maximum <em>a-posteriori</em> genotype? What are the conditions that lead to the heterozygous individual with only a single read having a high posterior probability of being a heterozygote?</li>
+<li>When read depths are low, even if you are calling genotypes using the highest posterior probability, do you expect the results to be very accurate?</li>
+</ol>
+<p>There are more questions for thought at the bottom of the Shiny App Notebook, too.</p>
+</section>
+</section>
+<section id="one-final-hands-on-exercise" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="one-final-hands-on-exercise"><span class="header-section-number">1.5</span> One final hands on exercise</h2>
+<p>You might hear someone say, “the great thing about using genotype likelihoods, instead of called genotypes, with low-depth sequencing, is that you can <em>propagate the uncertainty downstream in your analysis.</em>”</p>
+<p>In fact, I have said that sort of thing many times before (and probably have said it several times today.)</p>
+<p>But, what the hell does it really mean?</p>
+<section id="shiny-interlude-3" class="level3" data-number="1.5.1">
+<h3 data-number="1.5.1" class="anchored" data-anchor-id="shiny-interlude-3"><span class="header-section-number">1.5.1</span> Shiny Interlude #3</h3>
+<p>Our third exercise with a ShinyApp addresses this question, revealing some of the unfortunate things that can happen if you call genotypes from low coverage sequencing data and you treat them as known/certain.</p>
+<p>From the <code>ngs-genotype-models</code> RStudio project that you downloaded previously:</p>
+<ul>
+<li>Open <code>003-read-inference-gsi.Rmd</code></li>
+<li>Install any packages that RStudio tells you that you might need. (i.e.&nbsp;<code>install.packages("cowplot")</code> if need be…)</li>
+<li>Hit the “Run Document” Button</li>
+</ul>
+<p>(If this doesn’t work for you, then you can access the Shiny app over the web: <a href="https://eriqande.shinyapps.io/003-read-inference-gsi/">https://eriqande.shinyapps.io/003-read-inference-gsi/</a> )</p>
+</section>
+</section>
+<section id="wrap-up" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="wrap-up"><span class="header-section-number">1.6</span> Wrap Up</h2>
+<p>Key Take Home Messages:</p>
+<ol type="1">
+<li>To the Bayesian, probability is how we measure uncertainty.</li>
+<li>The posterior is proportional to the prior times the likelihood.</li>
+<li>Monte Carlo sampling from a posterior distribution makes it very easy to assess the posterior distribution of any function of the samples.</li>
+<li>MCMC is useful to Bayesians because it can simulate from the posterior without needing to compute the normalizing constant.</li>
+<li>MCMC is great, but should be used with care.</li>
+<li>In their essence, models for calling genotypes probabilistically while estimating and accounting for allele frequencies are quite simple, and make a lot of sense.</li>
+<li>There are a lot of RAD/GBS-derived data sets of genotypes that show evidence of profoundly high rates of heterozygotes being miscalled as homozygotes. It doesn’t seem out of the question that such error rates could influence downstream inferences.</li>
+<li>However, not all studies show very high genotyping error rates—high read depths and intelligent/stringent filtering can prevail.</li>
+<li>Probabilistic genotype calling is certainly a principled way to address these issues, but it is not a panacea. It still adheres to the principles of GIGO and can’t make something from nothing.</li>
+<li>Don’t fool yourself into thinking that by using probabilistic genotype calling you won’t lose anything when you shave sequencing effort down to as little as possible. It is possible to lose a fair bit when you go down to low read depth / coverage. But, it depends on what question you are trying to answer.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Overview/Welcome</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./snakemake.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">A brief introduction to Snakemake</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

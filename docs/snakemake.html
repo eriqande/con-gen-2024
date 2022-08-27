@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Con-Gen-2022 - 2&nbsp; A brief introduction to Snakemake</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./probinf.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">A brief introduction to Snakemake</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Con-Gen-2022</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Overview/Welcome</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./probinf.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Probability, inference, and genotype likelihoods</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./snakemake.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">A brief introduction to Snakemake</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">References</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#narrative-explanation-of-snakemake" id="toc-narrative-explanation-of-snakemake" class="nav-link active" data-scroll-target="#narrative-explanation-of-snakemake"> <span class="header-section-number">2.1</span> Narrative Explanation of Snakemake</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">A brief introduction to Snakemake</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<section id="narrative-explanation-of-snakemake" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="narrative-explanation-of-snakemake"><span class="header-section-number">2.1</span> Narrative Explanation of Snakemake</h2>
+<p>For managing these sorts of bioinformatic workflows there is a Python-based framework called <a href="https://snakemake.readthedocs.io/en/stable/">Snakemake</a> that is well-supported, flexible, and incredibly powerful. Understanding how Snakemake works and becoming familiar with its many features involves a non-trivial learning curve; however, for anyone spending a sizable chunk of their graduate career managing bioinformatic analyses, or for anyone that is a lab bioinformatician running bioinformatic workflows across many species (for example), the benefits of learning Snakemake will continue to pay dividends for years to come.</p>
+<p>Someone who has mastered all the topics in Part I of this handbook (Unix programming, working on remote computers, etc.) certainly will have the skills to write what I will call <em>input-oriented</em>, <em>forward-marching</em> workflows. I call these “forward-marching” because they start from a set of input files (for example files of sequences from a sequencer), and then the workflow is defined as a series of sequential steps, one after the other. They are “input-oriented” in the sense that such a workflow starts with a series of inputs, but the workflow itself doesn’t really know what it is trying to produce from those inputs until it has run all the way through and actually turned those inputs into outputs. For example, all the input files might get trimmed or cleaned, then they would all get mapped to a genome, and then those mapped sequences would be used to call variants, so as to find SNPs in the data, etc. If you were writing this in an input-oriented, forward-marching fashion, then, to deal with the fact that you had multiple files of DNA sequences (for example, one for each individual bird or fish that had been sampled), you might write Unix <code>for</code> loops to cycle over all the input files as in Section&nbsp;@ref(unix-for-loops), or, you could define a SLURM job array to start a separate job instance for each input file, as in Section&nbsp;@ref(slurm-job-arrays). In each case, you would have to do some extra programming to deal with the different input files, and if one of the steps of your workflow failed on just one, or a few, of the files, you might spend a large amount of time tracking those failures down and than manually re-running that small number of jobs.</p>
+<p>By contrast, Snakemake takes a different approach to managing workflows. We will call it an <em>output-oriented</em>, <em>backward-looking</em> approach. We call it that because workflows in Snakemake are defined first and foremost in terms of the <em>output files</em> that are desired, along with instructions on how to create those output files from necessary input files and bioinformatic programs. They are <em>backward-looking</em> in the sense that, once you have developed a Snakemake workflow, you get results by telling Snakemake which output files you want to create, and then it “looks backwards” through the workflow to determine which input files are needed to create the requested outputs. Sometimes it has to look backwards through several steps before it identifies all the necessary input files. Once it has found those necessary inputs, it then runs forward through the steps to create the output files. In this phase, the workflow looks like it is “forward-marching”, in the sense that outputs are being created from inputs. But, in order to get to that “forward-running” phase, Snakemake had to look backward to figure out what inputs to use.</p>
+<p>The above constitutes some subtle points, that might not be clear upon first reading, but we will try to summarize it in a few pithy phrases:</p>
+<ul>
+<li>A workflow defined as a typical Unix shell script can be thought of as a process that runs forward. You give it a lot of input files and it just cranks through a bunch of steps until the output files are made.</li>
+<li>A workflow defined with Snakemake works differently. First you define the workflow in terms of a series of “rules.” Then, when you request any given set of output files, Snakemake will look backwards through the rules of the workflow and figure out exactly which steps must be performed, on which input files, in order to create the requested output files. Once it has determined that, it runs just those necessary steps.</li>
+</ul>
+<p>There are many advantages to this output-oriented, backward-looking approach:</p>
+<ol type="1">
+<li>If your workflow has many steps, and some of them have already been run, then Snakemake automatically recognizes that, and will not re-run steps in the workflow that have already been completed. In an input-oriented system (like a traditional Unix script), you would have to spend the time to figure out which steps had already been run, and then run your script only from that point forward. Doing so can be a hassle and can also be prone to errors.</li>
+<li>A workflow defined by Snakemake, being explicit about the inputs needed for each step, naturally defines “work units” that can be run independently of one another. Accordingly, Snakemake, itself, can break a huge bioinformatic workflow into a number of small jobs that can be run in parallel, saving you, the user, from having to write scripts to launch a series of SLURM job arrays.</li>
+<li>The fact that Snakemake automatically keeps track of which inputs already exist—and which might still need to be generated—provides huge benefits when some of your jobs fail. Anyone who has used a cluster has stories about jobs that inexplicably fail. Without a workflow management system like Snakemake, you can spend almost as much of your own time managing these failed jobs as it took to launch all the jobs in the first place.</li>
+</ol>
+<p>In addition to these obvious advantages of the output-oriented approach, Snakemake also includes a number of features that make it easy to use your workflow on a variety of different platforms. It is tightly integrated with conda (Section&nbsp;@ref(miniconda)), letting the user define conda environments for each step in the workflow. This means that if you move your whole workflow to a new cluster, you don’t have to spend any time coordinating the installation of the programs you need—if you set things up properly with Snakemake and conda, that will happen automatically. If you distribute your workflows to other people to use, this is particularly helpful, since you will spend far less time assisting them in setting up their computer environment to run your workflow. Snakemake can also be customized to work in your own cluster environment. Finally, there are interfaces to allow your Snakemake workflows to run seamlessly in the cloud.</p>
+<p>Full documentation for Snakemake can be found at <a href="https://snakemake.readthedocs.io/en/stable/">https://snakemake.readthedocs.io/en/stable/</a>. This documentation is comprehensive, but can feel a little daunting at first. On the other hand, the developers of Snakemake also provide an excellent and accessible tutorial at <a href="https://snakemake.readthedocs.io/en/stable/tutorial/tutorial.html">https://snakemake.readthedocs.io/en/stable/tutorial/tutorial.html</a>.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./probinf.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Probability, inference, and genotype likelihoods</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

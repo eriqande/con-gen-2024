@@ -1,0 +1,24 @@
+# Overview/Welcome {.unnumbered}
+
+This is a Quarto Book that holds most of the materials related to
+Eric C. Anderson's presentation at ConGen 2022.
+
+This year Eric is giving two different presentations:
+
+1. An introduction to the idea of probability and inference and how they
+are used in using genotype likelihoods for population genetic inference.
+2. A short (1 hour) introduction to Snakemake---a flexible and full-featured
+workflow management system tailored to bioinformatic processing.
+
+For each of the presentations, there is a narrative description that may be found in the
+pages of this book---each presentation constitutes a different chapter of the book.  These
+chapters can be accessed from the contents links to the left of the page.
+
+There are also slides that Eric will be using during the presentations. They
+were made using Quarto's `revealjs` format, and can be accessed here:
+
+* Link 1
+* Link 2
+
+To learn more about Quarto books visit <https://quarto.org/docs/books>.
+

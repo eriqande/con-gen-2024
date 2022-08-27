@@ -1,0 +1,26 @@
+# References {.unnumbered}
+
+
+
+::: {#refs}
+:::
+
+
+```{r slides, include=FALSE}
+options(knitr.duplicate.label = "allow")  # because our slides might have code blocks named setup
+
+# quarto does not seem to render properly if you give it a different output
+# file, but the self-contained html file alongside the qmd file works,
+# so we can move the result after rendering
+dir.create("docs/slides", recursive = TRUE, showWarnings = FALSE)
+quarto::quarto_render(
+  "prob-slides.qmd",
+  output_format = "revealjs"
+)
+quarto::quarto_render(
+  "snake-slides.qmd",
+  output_format = "revealjs"
+)
+file.rename(from = "prob-slides.html", to = "docs/slides/prob-slides.html")
+file.rename(from = "snake-slides.html", to = "docs/slides/snake-slides.html")
+```
