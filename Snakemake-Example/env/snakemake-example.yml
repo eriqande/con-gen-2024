@@ -1,0 +1,17 @@
+name: snakemake-example
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - snakemake==7.7.0
+  - gatk4==4.2.6.1
+  - samtools==1.15.1
+  - bwa==0.7.17
+  - graphviz==2.50.0
+  - ca-certificates
+  - certifi
+  - openssl
+  - trimmomatic=0.36
+  - fastp=0.23.2
+  - tree=2.0.0

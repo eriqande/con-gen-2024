@@ -1,0 +1,160 @@
+
+
+SAMPLES = ['A', 'B', 'C']
+
+
+rule genome_faidx:
+  input:
+    "resources/genome.fasta",
+  output:
+    "resources/genome.fasta.fai",
+  log:
+    "results/logs/genome_faidx.log",
+  shell:
+    "samtools faidx {input} 2> {log}"
+
+
+rule genome_dict:
+  input:
+    "resources/genome.fasta",
+  output:
+    "resources/genome.dict",
+  log:
+    "results/logs/genome_dict.log",
+  shell:
+    "samtools dict {input} > {output} 2> {log} "
+
+
+rule bwa_index:
+  input:
+    "resources/genome.fasta"
+  output:
+    multiext("resources/genome.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa"),
+  log:
+    "results/logs/bwa_index/bwa_index.log"
+  shell:
+    "bwa index {input} 2> {log} "
+
+
+
+
+rule trim_reads:
+  input:
+    r1="data/{sample}_R1.fastq.gz",
+    r2="data/{sample}_R2.fastq.gz",
+  output:
+    r1="results/trimmed/{sample}_R1.fastq.gz",
+    r1_unp="results/trimmed/{sample}_R1.unpaired.fastq.gz",
+    r2="results/trimmed/{sample}_R2.fastq.gz",
+    r2_unp="results/trimmed/{sample}_R2.unpaired.fastq.gz",
+  log:
+    "results/logs/trim_reads/{sample}.log"
+  shell:
+    " trimmomatic PE {input} {output} "
+    "  ILLUMINACLIP:resources/adapters/TruSeq3-PE-2.fa:2:30:10  "
+    "  LEADING:3  "
+    "  TRAILING:3  "
+    "  SLIDINGWINDOW:4:15  "
+    "  MINLEN:36 2> {log} "
+
+
+
+
+rule map_reads:
+  input:
+    r1="results/trimmed/{sample}_R1.fastq.gz",
+    r2="results/trimmed/{sample}_R2.fastq.gz",
+    genome="resources/genome.fasta",
+    idx="resources/genome.fasta.bwt"
+  output:
+    "results/bam/{sample}.bam"
+  log:
+    "results/logs/map_reads/{sample}.log"
+  params:
+    RG="-R '@RG\\tID:{sample}\\tSM:{sample}\\tPL:ILLUMINA' "
+  shell:
+    " (bwa mem {params.RG} {input.genome} {input.r1} {input.r2} | "
+    " samtools view -u | "
+    " samtools sort - > {output}) 2> {log} "
+
+
+
+
+rule mark_duplicates:
+  input:
+    "results/bam/{sample}.bam"
+  output:
+    bam="results/mkdup/{sample}.bam",
+    bai="results/mkdup/{sample}.bai",
+    metrics="results/qc/mkdup_metrics/{sample}.metrics"
+  log:
+    "results/logs/mark_duplicates/{sample}.log"
+  shell:
+    " gatk MarkDuplicates  "
+    "  --CREATE_INDEX "
+    "  -I {input} "
+    "  -O {output.bam} "
+    "  -M {output.metrics} 2> {log} "
+
+
+
+
+rule make_gvcfs:
+  input:
+    bam="results/mkdup/{sample}.bam",
+    bai="results/mkdup/{sample}.bai",
+    ref="resources/genome.fasta",
+    idx="resources/genome.dict",
+    fai="resources/genome.fasta.fai"
+  output:
+    gvcf="results/gvcf/{sample}.g.vcf.gz",
+    idx="results/gvcf/{sample}.g.vcf.gz.tbi",
+  params:
+    java_opts="-Xmx4g"
+  log:
+    "results/logs/make_gvcfs/{sample}.log"
+  shell:
+    " gatk --java-options \"{params.java_opts}\" HaplotypeCaller "
+    " -R {input.ref} "
+    " -I {input.bam} "
+    " -O {output.gvcf} "
+    " -L CM031202.1    "            # just one small-ish "chromosome" for speed
+    " --native-pair-hmm-threads 1 " # this is just for this small example
+    " -ERC GVCF > {log} 2> {log} "
+
+
+
+
+rule import_genomics_db:
+  input:
+    gvcfs=expand("results/gvcf/{s}.g.vcf.gz", s=SAMPLES)
+  output:
+    gdb=directory("results/genomics_db/CM031202.1")
+  log:
+    "results/logs/import_genomics_db/log.txt"
+  shell:
+    " VS=$(for i in {input.gvcfs}; do echo -V $i; done); "  # make a string like -V file1 -V file2
+    " gatk --java-options \"-Xmx4g\" GenomicsDBImport "
+    "  $VS  "
+    "  --genomicsdb-workspace-path {output.gdb} "
+    "  -L  CM031202.1 2> {log} "
+
+
+
+
+rule vcf_from_gdb:
+  input:
+    gdb="results/genomics_db/CM031202.1",
+    ref="resources/genome.fasta",
+    fai="resources/genome.fasta.fai",
+    idx="resources/genome.dict",
+  output:
+    vcf="results/vcf/all.vcf"
+  log:
+    "results/logs/vcf_from_gdb/log.txt"
+  shell:
+    " gatk --java-options \"-Xmx4g\" GenotypeGVCFs "
+    "  -R {input.ref}  "
+    "  -V gendb://{input.gdb} "
+    "  -O {output.vcf} 2> {log} "
+
