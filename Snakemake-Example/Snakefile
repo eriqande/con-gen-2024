@@ -11,7 +11,7 @@ rule genome_faidx:
   log:
     "results/logs/genome_faidx.log",
   shell:
-    "samtools faidx {input} 2> {log}"
+    "samtools faidx {input} 2> {log} "
 
 
 rule genome_dict:
@@ -65,7 +65,7 @@ rule map_reads:
     r1="results/trimmed/{sample}_R1.fastq.gz",
     r2="results/trimmed/{sample}_R2.fastq.gz",
     genome="resources/genome.fasta",
-    idx="resources/genome.fasta.bwt"
+    idx=multiext("resources/genome.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa")
   output:
     "results/bam/{sample}.bam"
   log:
