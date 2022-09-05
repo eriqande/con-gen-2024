@@ -3,13 +3,14 @@ format:
   revealjs:
     theme: [default, ./quarto-static/eric-noaa.scss]
     self-contained: true
-editor: source
+    slide-number: true
+    scrollable: true
 ---
 
 #  {background-image="quarto-static/slideteal.png" background-size="contain"}
 
 ::: {style="margin-left: 260px; margin-top: 100px; margin-right: 10px; font-size: 3.2em;"}
-Using Genetic Data to Find Kin Pairs
+A Brief Introduction to Snakemake
 :::
 
 ::: {style="margin-left: 260px; font-size: 2em;"}
@@ -17,36 +18,840 @@ Eric C. Anderson
 :::
 
 ::: {style="margin-left: 260px;"}
-The Wildlife Society CKMR Workshop, Sunday November 6, 2022
+Conservation Genomics Workshop, Friday September 9, 2022
 :::
 
-## A First Slide in Quarto {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+## What the Heck is Snakemake? {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
-What is up! I am just going to drone on and on here to see how far this text wraps in different contexts. Whoa! Is this long enough yet?
+-   A Python-based "Workflow Management System"
+-   Allows you to define a complex (bioinformatic) workflow as a series of steps that involve input files and output files.
+-   It identifies the dependencies between the steps and then runs all the steps needed to create a *requested output file*.
+-   This greatly simplifies the orchestration of bioinformatics, and makes it much easier to find and re-run failed jobs.
+-   Incredibly valuable for reproducible research:
+    -   Not just so others can reproduce your results
+    -   Also useful for you to quickly run your workflow on different clusters, etc.
 
-$$
-\int_0^1 x^{\alpha - 1}(1-x)^{\beta-1}dx
-$$
+### That sounds pretty jargony!
 
-## Quarto {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+-   Illustrate with an example
+-   Hope that it piques the curiosity of some
 
-Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+## Our Small Example: GATK Best Practices "Light" {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
-
-This image got inserted by pasting!
-
-## Code {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
-
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-#| echo: true
-#| output-location: column-fragment
-x <- 1:10
-y <- x^2
-
-x
-y
-
-plot(x,y)
+::: columns
+::: {.column width="50%"}
+```{mermaid}
+flowchart TD
+  A(fastq files from 3 samples: our raw data) --> B(Trim the reads: trimmomatic)
+  B --> C(Map the reads to a reference genome: bwa mem)
+  C --> D(Mark PCR and optical duplicates: MarkDuplicates)
+  D --> E(Make gVCF files for each sample: HaplotypeCaller)
+  E --> F(Load gVCFs into Genomic DB: GenomicsDBImport)
+  F --> G(Create VCFs from Genomic DB: GenotypeGVCFs)
 ```
+:::
+
+::: {.column width="50%"}
+#### A mini data set that only takes about 1.5 minutes to run through the major steps of a GATK-like variant calling workflow
+
+-   Heavily subsampled Chinook salmon reads.
+-   Three paired-end fastqs, and data only from three or four chromosomes.
+-   We will trim it, map it, mark duplicates, then make one gVCF file per individual.
+-   Then, to save time, we call variants only on one chromosome: `CM031202.1`.
+:::
+:::
+
+## Setting up our workspaces {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+::: columns
+::: {.column width="40%"}
+It should be simple to set this up. The code at right does the following:
+
+* `cd` to the Snakemake-Example data directory insdie your home directory
+* Activate the `snakemake-example` conda environment.
+* Test to make sure that you have `snakemake` on your PATH
+:::
+
+::: {.column width="60%"}
+``` sh
+# From the home directory of your ConGen server
+cd ~/Snakemake-Example
+
+conda activate snakemake-example
+
+# To make sure it is working, print the help information
+# for snakemake
+snakemake --help
+```
+:::
+:::
+
+## Initial Configuration of our work directory {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+::: columns
+::: {.column width="70%"}
+-   We can use the Unix `tree` utility to see what the Snakemake-Example directory contains.
+-   Within the Snakemake-Example directory, type `tree` at the command line. This shows:
+    -   A `README.md` with installation instructions
+    -   A `Snakefile`. Much more about that later.
+    -   A directory `data` with three pairs of FASTQ files
+    -   A directory `env` that has information to install necessary software with conda
+    -   A directory `resources` that has two subdirectories
+        -   `adapters`: info for trimming Illumina adapters
+        -   `genome.fasta`: a FASTA file with the reference genome
+:::
+
+::: {.column width="30%"}
+``` sh
+--% tree
+.
+├── README.md
+├── Snakefile
+├── data
+│   ├── A_R1.fastq.gz
+│   ├── A_R2.fastq.gz
+│   ├── B_R1.fastq.gz
+│   ├── B_R2.fastq.gz
+│   ├── C_R1.fastq.gz
+│   └── C_R2.fastq.gz
+├── env
+│   └── snakemake-example.yml
+└── resources
+    ├── adapters
+    │   ├── NexteraPE-PE.fa
+    │   ├── TruSeq2-PE.fa
+    │   ├── TruSeq2-SE.fa
+    │   ├── TruSeq3-PE-2.fa
+    │   ├── TruSeq3-PE.fa
+    │   └── TruSeq3-SE.fa
+    └── genome.fasta
+
+4 directories, 16 files
+```
+:::
+:::
+
+## How would you tackle this in a Unix way? {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+::: columns
+::: {.column width="45%"}
+### Consider the first two "steps"
+
+```{mermaid}
+flowchart TD
+  H(fastq files from 3 samples: our raw data) --> I(Trim the reads: trimmomatic)
+  I --> J(Map the reads to a reference genome: bwa mem)
+```
+:::
+
+::: {.column width="55%"}
+### Some pseudo-shell code
+
+``` sh
+# cycle over fastqs and do the trimming
+for S in A B C; do
+  trimmomatic data/${S}_R1.fastq.gz data/S{S}_R2.fastq.gz \
+    trimmed/${S}_R1.fastq.gz trimmed/${S}_R1_unpaired.fastq.gz \
+    trimmed/${S}_R2.fastq.gz trimmed/${S}_R2_unpaired.fastq.gz \
+    other-arguments-etc...
+done 
+
+
+# cycle over trimmed fastqs and do the mapping
+for S in A B C; do
+  bwa mem resources/genome.fasta \
+    trimmed/${S}_R1.fastq.gz trimmed/${S}_R2.fastq.gz
+done
+```
+
+### What are some issues here?
+
+1.  Ah crap! I forgot to index `genome.fasta`!\
+2.  This does not run the jobs in parallel!
+
+### Possible solutions for #2?
+
+You can get things done in parallel using SLURM's `sbatch` (which you probably need to use anyway).
+:::
+:::
+
+## Going about doing this with SLURM (a sketch...) {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+::: columns
+::: {.column width="45%"}
+### Consider the first two "steps"
+
+```{mermaid}
+flowchart TD
+  H(fastq files from 3 samples: our raw data) --> I(Trim the reads: trimmomatic)
+  I --> J(Map the reads to a reference genome: bwa mem)
+```
+:::
+
+::: {.column width="55%"}
+### Some pseudo-shell code
+
+``` sh
+# cycle over fastqs and dispatch each trimming job to SLURM
+for S in A B C; do
+  sbatch my-trim-script.sh $S
+done 
+
+# ONCE ALL THE TRIMMING IS DONE...
+# cycle over trimmed fastqs and dispatch each mapping job to SLURM
+for S in A B C; do
+  sbatch my-map-script $S
+done
+```
+
+### What is not-so-great about this?
+
+1.  I have to wait for all the jobs of each step to finish
+2.  I have to explicitly start each "next" step.
+3.  If some jobs of a step fail, it is a PITA to go back and figure out which ones failed.
+4.  The dependence between the outputs of the trimming step and the mapping step are implicit based on file paths buried in the scripts, rather than *explicit*.
+:::
+:::
+
+## The Advantages of Snakemake {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+-   The dependence between input and output files is *explicit*
+-   This lets snakemake identify every single job that must be run---and the order they must be run in---for the entire workflow (all the steps)
+-   This maximizes the number of jobs that can be run at once.
+-   The necessary steps are determined by starting from the ultimate outputs that are desired or requested...
+-   ...then working backward through the dependencies to identify which jobs must be run to eventually get the ultimate output.
+-   This *greatly* simplifies the problem of re-running any jobs that might have failed for reasons "known only to the cluster."
+
+## Snakemake is a program that interprets a set of rules stored in a *Snakefile* {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+::: columns
+::: {.column width="50%"}
+Some explanations:
+
+-   Rule blocks: the fundamental unit
+-   Correspond to "steps" in the workflow
+-   Keyword "rule" + name + colon
+-   Indenting like Python/YAML
+-   Typically includes sub-blocks of `input`, `output`, and `shell`
+-   (Also `params`, `log`, `benchmarks`, `conda`, etc.)
+:::
+
+::: {.column width="50%"}
+``` {.yaml filename="Snakefile"}
+`r paste(readLines("Snakemake-Example/Snakefile"), collapse = "\n")`
+```
+:::
+:::
+
+## A closer look at a simple rule {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+#### (Screen grab from Sublime Text which has great highlighting for Snakemake)
+
+::: columns
+::: {.column width="50%"}
+![](images/paste-0238E703.png)
+:::
+
+::: {.column width="50%"}
+The rule:
+
+-   *Requires* the input file `resources/genome.fasta`
+-   *Produces* the output file `resources/genome.dict`
+-   *Writes to* a log file in `results/logs/genome_dict.log`
+-   *Uses* the shell code `samtools dict {input} > {output} 2> {log}` to get the job done
+:::
+:::
+
+-   What are those purple bits? `{input}`, `{output}`, and `{log}`?! in the shell code?
+-   That is the syntax snakemake uses to substitute the values in the *output*, *input*, or *log* blocks (or other blocks...) into the Unix shell command.
+- **Big Note**: Output and log information is not written _automatically_ to the
+output file and log file, nor is input taken automatically from the input file---you
+have to dicate that behavior by what you write in the shell block!
+-   Thus, when this rule runs, the shell command executed will be:
+
+::: {style="font-size: 2em;"}
+``` sh
+samtools dict resources/genome.fasta > resources/genome.dict 2> results/logs/genome_dict.log 
+```
+:::
+
+
+## We "drive" Snakemake by requesting the creation of *output files* {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+### These output files are sometimes referred to as "targets"
+
+-   `snakemake` looks for and uses the `Snakefile` in the current working directory.
+-   Option `-n` tells snakemake to do a "dry-run:" (Just say what you would do, *but don't do it!*)
+-   Option `-p` tells snakemake to print the shell commands of the rules.
+-   Those two options can be combined: `-np`
+-   And we request `resources/genome.dict` as a target by just putting it on the command line:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake -np resources/genome.dict
+```
+:::
+
+-   And the output you got from that should look like:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="What the output should look like"}
+Building DAG of jobs...
+Job stats:
+job            count    min threads    max threads
+-----------  -------  -------------  -------------
+genome_dict        1              1              1
+total              1              1              1
+
+
+[Fri Sep  2 09:34:41 2022]
+rule genome_dict:
+    input: resources/genome.fasta
+    output: resources/genome.dict
+    log: results/logs/genome_dict.log
+    jobid: 0
+    resources: tmpdir=/var/folders/xg/mz_qt7q54yv_hwzvhskwx2c00000gp/T
+
+samtools dict resources/genome.fasta > resources/genome.dict 2> results/logs/genome_dict.log
+Job stats:
+job            count    min threads    max threads
+-----------  -------  -------------  -------------
+genome_dict        1              1              1
+total              1              1              1
+
+This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
+```
+:::
+
+## Let's actually run that! {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+-   Remove the `-np` option and add `--cores 1` to tell snakemake to run the requested jobs on one core
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake --cores 1 resources/genome.dict
+```
+:::
+
+-   The output you get looks like what you saw before, but in this case the requested output file has been created.
+-   And a log capturing `stderr` (if any) was created:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell to see all the files"}
+tree .
+```
+:::
+
+### The output shows those two new files that were created
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Output should look like this:"}
+.
+├── README.md
+├── Snakefile
+├── data
+│   ├── A_R1.fastq.gz
+│   ├── A_R2.fastq.gz
+│   ├── B_R1.fastq.gz
+│   ├── B_R2.fastq.gz
+│   ├── C_R1.fastq.gz
+│   └── C_R2.fastq.gz
+├── env
+│   └── snakemake-example.yml
+├── resources
+│   ├── adapters
+│   │   ├── NexteraPE-PE.fa
+│   │   ├── TruSeq2-PE.fa
+│   │   ├── TruSeq2-SE.fa
+│   │   ├── TruSeq3-PE-2.fa
+│   │   ├── TruSeq3-PE.fa
+│   │   └── TruSeq3-SE.fa
+│   ├── genome.dict           <--- THIS IS A NEW FILE!
+│   └── genome.fasta
+└── results
+    └── logs
+        └── genome_dict.log   <--- THIS IS A NEW FILE!
+```
+:::
+
+## Once a target file is created or updated Snakemake knows it {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+-   If you request the file `resources/genome.dict` from Snakemake now, it tells you that the file is there *and does not need updating*.
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake -np resources/genome.dict
+```
+:::
+
+-   Because `resources/genome.dict` already exists (and none of its dependencies have been updated since it was created) Snakemake tells you this:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Expected output from Snakemake"}
+Building DAG of jobs...
+Nothing to be done (all requested files are present and up to date).
+```
+:::
+
+-   This helps you to not remake output files that don't need remaking!
+
+## Wildcards: How Snakemake manages replication {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+#### Wildcards allow running multiple instances of the same rule on different input files by simple pattern matching
+
+::: columns
+::: {.column width="50%"}
+![](images/paste-89336B81.png)
+:::
+
+::: {.column width="50%"}
+
+* If we request from Snakemake the file  
+`results/trimmed/A_R1.fastq.gz`,
+* then, Snakemake recognizes that this matches the _output_ of rule
+`trim_reads` with the wildcard `{sample}` replaced by `A`.
+* And Snakemake _propagates_ the value `A` of the wildcard 
+`{sample}` to the _input_ block.
+* Thus Snakemake knows that to create  
+`results/trimmed/A_R1.fastq.gz`  
+it needs the input files:
+    - `data/A_R1.fastq.gz`
+    - `data/A_R2.fastq.gz`
+:::
+:::
+
+
+## Try requesting those trimmed fastq files {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+* See what snakemake would do when you ask for `results/trimmed/A_R1.fastq.gz`.
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake -np results/trimmed/A_R1.fastq.gz
+```
+:::
+
+* Note that you can request files from more than one sample:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake -np results/trimmed/A_R1.fastq.gz results/trimmed/B_R1.fastq.gz results/trimmed/C_R1.fastq.gz  
+```
+:::
+
+* Then, go ahead and run that last one, instructing Snakemake to use three cores
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake --cores 3 results/trimmed/A_R1.fastq.gz results/trimmed/B_R1.fastq.gz results/trimmed/C_R1.fastq.gz  
+```
+:::
+
+Note that it will go ahead and start all those jobs independently, and concurrently,
+because they do not depend on one another.  This is how Snakemake manages and maximizes 
+parallelism.
+
+
+## Chains of file dependencies {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+::: columns
+::: {.column width="50%"}
+* If Snakemake does not find a required input file for a rule that provides
+a requested output, it searches through the outputs of all the other rules in the
+Snakefile to find a rule that might provide the required input file as one of
+its outputs.
+* It then schedules all the necessary rules to run.
+* This means that an entire workflow with thousands of jobs can be triggered by
+requesting a single output file.
+
+### Short Breakout Room Activity
+
+* Trace the rules needed if we request the file `results/vcf/all.vcf`. 
+:::
+
+::: {.column width="50%"}
+``` {.yaml filename="Snakefile"}
+`r paste(readLines("Snakemake-Example/Snakefile"), collapse = "\n")`
+```
+:::
+:::
+
+### Helpful notes:
+
+* `expand("results/gvcf/{s}.g.vcf.gz", s=SAMPLES)` is a list of files:
+
+::: {style="font-size: 1.7em;"}
+```{.sh}
+[results/gvcf/A.g.vcf.gz, results/gvcf/B.g.vcf.gz, results/gvcf/C.g.vcf.gz]
+```
+:::
+
+* `multiext("resources/genome.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa")` is a list
+of files:
+
+::: {style="font-size: 1.7em;"}
+```{.sh .code-overflow-wrap}
+[resources/genome.fasta.amb, resources/genome.fasta.ann, resources/genome.fasta.bwt, resources/genome.fasta.pac, resources/genome.fasta.sa]
+```
+:::
+
+
+
+## Let's request `results/vcf/all.vcf` from Snakemake {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+* Let's start with a dry run:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake -np results/vcf/all.vcf  
+```
+:::
+
+* After we look at that, and discuss, let's actually run it, using 2 cores:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake -p --cores 2 results/vcf/all.vcf  
+```
+:::
+
+That should take a minute or two.
+
+* If you try to run the workflow again, Snakemake tells you that you do not need
+to, because everything is up to date:  Try running the above line again:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake -p --cores 2 results/vcf/all.vcf  
+```
+:::
+
+
+## If any inputs change, Snakemake will re-run the rules that depend on the new input {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+* Imagine that the sequencing center calls us to say that there has been a terrible mistake and they are sending you new (and correct) versions of data for sample C: `C_R1.fastq.gz` and `C_R2.fastq.gz` 
+* Snakemake uses file modification dates to check if any inputs have been updated after target outputs have been created.
+* So we can simulate new fastq files for sample C by using the `touch` command to update the fastq file modification dates:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+touch data/C_R1.fastq.gz data/C_R2.fastq.gz
+```
+:::
+
+* Now, when we run Snakemake again, it tells us we have to run more jobs, _but only the ones that depend on data from sample C_.  Do a dry run to check that:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake -np results/vcf/all.vcf
+```
+:::
+
+* Check that it will not re-run the trimming, mapping, and gvcf-making steps for samples
+A and B, which are aleady done.  
+
+
+## Snakemake makes it very easy to re-run failed jobs {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+* Clusters and computers fail (sometimes for no apparent reason) occasionally
+* If this happens in a large, traditionally managed (Unix script) workflow, finding and
+re-running the failures can be hard.
+* Example: 7 birds out of 192 fail on HaplotypeCaller because those jobs got sent to nodes without AVX acceleration.
+* Five years ago, setting up custom scripts to re-run just those 7 birds could cost me an hour---about as much time as it takes me now to set up an entire workflow with Snakemake.
+* On the next slide we are going to create a job failure to see how easy it is to
+re-run jobs that failed with Snakemake.
+
+
+## Simulating a job failure as an example {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+* First, let's remove the entire `results` directory, so that we have to re-run most of
+our workflow.
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+rm -rf results
+```
+:::
+
+* Now, we are going to corrupt the read-2 fastq file for sample A (but keeping a copy
+of the original)
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+cp data/A_R2.fastq.gz data/A_R2.fastq.gz-ORIG
+echo "GARBAGE_DATA" | gzip -c > data/A_R2.fastq.gz
+```
+:::
+
+* Now, do a dry-run, requesting `results/vcf/all.vcf`
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake -np results/vcf/all.vcf
+```
+:::
+
+The output ends telling us that 14 jobs will be run:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="End of the expected output"}
+Job stats:
+job                   count    min threads    max threads
+------------------  -------  -------------  -------------
+import_genomics_db        1              1              1
+make_gvcfs                3              1              1
+map_reads                 3              1              1
+mark_duplicates           3              1              1
+trim_reads                3              1              1
+vcf_from_gdb              1              1              1
+total                    14              1              1
+```
+:::
+
+
+* Now, run it with 2 cores and give it the `--keep-going` command which means
+that even if an error occurs on one job, all the other jobs _that don't depend
+on outputs from the failed job_ will still get run.
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake --cores 2 --keep-going results/vcf/all.vcf
+```
+:::
+
+* Snakemake tells us that 8 of the 14 jobs were successful but at least
+one job failed:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Snakemake's concluding comments:"}
+8 of 14 steps (57%) done
+Exiting because a job execution failed. Look above for error message
+BUG: Out of jobs ready to be started, but not all files built yet. Please check https://github.com/snakemake/snakemake/issues/823 for more information.
+Remaining jobs:
+ - make_gvcfs: results/gvcf/A.g.vcf.gz, results/gvcf/A.g.vcf.gz.tbi
+ - mark_duplicates: results/mkdup/A.bam, results/mkdup/A.bai, results/qc/mkdup_metrics/A.metrics
+ - trim_reads: results/trimmed/A_R1.fastq.gz, results/trimmed/A_R1.unpaired.fastq.gz, results/trimmed/A_R2.fastq.gz, results/trimmed/A_R2.unpaired.fastq.gz
+ - vcf_from_gdb: results/vcf/all.vcf
+ - import_genomics_db: results/genomics_db/CM031202.1
+ - map_reads: results/bam/A.bam
+```
+:::
+
+Cool! It tells us explicitly which jobs remain to be run. And they are exactly the
+ones that depend on outputs from sample A.
+  
+  
+  
+  
+  
+  
+  
+  
+
+## Re-running failed jobs is as simple as just re-starting Snakemake {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+* Let's say we notice that `data/A_R2.fastq.gz` was corrupted, and so we replace it
+with the uncorrupted version:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+cp data/A_R2.fastq.gz-ORIG data/A_R2.fastq.gz
+```
+:::
+
+* Then, do a dry-run to see what Snakemake will do to finish out the workflow:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake -np results/vcf/all.vcf
+```
+:::
+
+It is only going to require 6 jobs to produce `results/vcf/all.vcf`:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="This is the end of the dry-run output"}
+Job stats:
+job                   count    min threads    max threads
+------------------  -------  -------------  -------------
+import_genomics_db        1              1              1
+make_gvcfs                1              1              1
+map_reads                 1              1              1
+mark_duplicates           1              1              1
+trim_reads                1              1              1
+vcf_from_gdb              1              1              1
+total                     6              1              1
+```
+:::
+
+* So, start it up with 2 cores:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake --cores 2 results/vcf/all.vcf
+```
+:::
+
+Now that sample A is not corrupted, it finishes.  Yay! That was easy.
+
+
+## Snakemake encourages (requires?) that your outputs all reside in a _consistent_ directory structure {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+#### (And a side note: Snakemake automatically creates all the diretories needed to store its output files)
+
+* Check out all the outputs of our workflow in an easy-to-understand directory structure within `results`:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+# only drill down three directory levels (-L 3)
+tree -L 3 results
+```
+:::
+
+Here is what the result looks like:
+
+::: {style="font-size: 1.7em;"}
+``` {.tree filename="The tree listing of the full results of the workflow"}
+results
+├── bam
+│   ├── A.bam
+│   ├── B.bam
+│   └── C.bam
+├── genomics_db
+│   └── CM031202.1
+│       ├── CM031202.1$1$6000000
+│       ├── __tiledb_workspace.tdb
+│       ├── callset.json
+│       ├── vcfheader.vcf
+│       └── vidmap.json
+├── gvcf
+│   ├── A.g.vcf.gz
+│   ├── A.g.vcf.gz.tbi
+│   ├── B.g.vcf.gz
+│   ├── B.g.vcf.gz.tbi
+│   ├── C.g.vcf.gz
+│   └── C.g.vcf.gz.tbi
+├── logs
+│   ├── bwa_index
+│   │   └── bwa_index.log
+│   ├── genome_dict.log
+│   ├── genome_faidx.log
+│   ├── import_genomics_db
+│   │   └── log.txt
+│   ├── make_gvcfs
+│   │   ├── A.log
+│   │   ├── B.log
+│   │   └── C.log
+│   ├── map_reads
+│   │   ├── A.log
+│   │   ├── B.log
+│   │   └── C.log
+│   ├── mark_duplicates
+│   │   ├── A.log
+│   │   ├── B.log
+│   │   └── C.log
+│   ├── trim_reads
+│   │   ├── A.log
+│   │   ├── B.log
+│   │   └── C.log
+│   └── vcf_from_gdb
+│       └── log.txt
+├── mkdup
+│   ├── A.bai
+│   ├── A.bam
+│   ├── B.bai
+│   ├── B.bam
+│   ├── C.bai
+│   └── C.bam
+├── qc
+│   └── mkdup_metrics
+│       ├── A.metrics
+│       ├── B.metrics
+│       └── C.metrics
+├── trimmed
+│   ├── A_R1.fastq.gz
+│   ├── A_R1.unpaired.fastq.gz
+│   ├── A_R2.fastq.gz
+│   ├── A_R2.unpaired.fastq.gz
+│   ├── B_R1.fastq.gz
+│   ├── B_R1.unpaired.fastq.gz
+│   ├── B_R2.fastq.gz
+│   ├── B_R2.unpaired.fastq.gz
+│   ├── C_R1.fastq.gz
+│   ├── C_R1.unpaired.fastq.gz
+│   ├── C_R2.fastq.gz
+│   └── C_R2.unpaired.fastq.gz
+└── vcf
+    ├── all.vcf
+    └── all.vcf.idx
+```
+:::
+
+
+## Snakemake eye-candy---visualizing the workflow dependencies {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+Using the `--dag` option, like this:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake --dag results/vcf/all.vcf | dot -Tsvg > dag.svg
+```
+:::
+
+Makes a directed acyclic graph (DAG) of the workflow.  If you view it,
+it looks like this:
+
+<img href="file.jpg" style="width: 100%;" />
+
+![](images/dag.svg){ width=100% }
+
+
+
+## Snakemake eye-candy---filegraphs {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+Using the `--filegraph` option, like this:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+snakemake --filegraph results/vcf/all.vcf | dot -Tsvg > filegraph.svg
+```
+:::
+
+Makes a graph (DAG) of the files involved in the workflow.  If you view it,
+it looks like this:
+
+<img href="file.jpg" style="width: 100%;" />
+
+![](images/filegraph.svg){ width=100% }
+
+
+
+## We've only scratched the surface {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+* You can specify fine-grained conda environments for each rule
+* Python code is allowed in most places in the Snakefile
+* _Input functions_ can be quite useful (or absolutely essential)
+* You can benchmark every job instance of a rule, which records the resources used (time, memory, etc.)
+
+
+## Where to from here? {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+* Complete documentation for Snakemake: [https://snakemake.readthedocs.io/en/stable/](https://snakemake.readthedocs.io/en/stable/)
+* The official Snakemake tutorial: [https://snakemake.readthedocs.io/en/stable/tutorial/tutorial.html#tutorial](https://snakemake.readthedocs.io/en/stable/tutorial/tutorial.html#tutorial)
+
+
+You might be interested in having a look at a workflow I wrote for whole genome sequencing
+of non-model organisms: [https://github.com/eriqande/mega-non-model-wgs-snakeflow](https://github.com/eriqande/mega-non-model-wgs-snakeflow).
+
+This provides a complete BWA-GATK workflow including an arbitrary number of "bootstrapped-BQSR" rounds.
+
+
+## Final Thoughts {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+
+* Learning snakemake may require a bit of an investment, BUT...
+* For anyone doing a lot of bioinformatic processing of sequence data it is
+quite a sound investment.
+
+
+
