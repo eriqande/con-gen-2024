@@ -7,9 +7,7 @@ library(tidyverse)
 ## Preamble
 
 
-In years past, Mike Miller has lectured on genotype likelihoods and genotype posteriors.
-This year, however, we all got to hear from Mike about the coalescent, which is an incredibly
-important topic in conservation genomics. So, I will spend a little more time talking
+In this session, we will spend a little time talking
 about genotype likelihoods and "probabilistic genotype calling."
 
 But, I want to talk about these topics in the context of a little background

@@ -832,6 +832,9 @@ it looks like this:
 * Python code is allowed in most places in the Snakefile
 * _Input functions_ can be quite useful (or absolutely essential)
 * You can benchmark every job instance of a rule, which records the resources used (time, memory, etc.)
+* Pretty easy integration (once you get past the somewhat scattered documentation)
+with SLURM on your cluster.  (I recommend checking out the resources at
+[https://github.com/jdblischak/smk-simple-slurm](https://github.com/jdblischak/smk-simple-slurm))
 
 
 ## Where to from here? {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}

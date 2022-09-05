@@ -3,13 +3,14 @@ format:
   revealjs:
     theme: [default, ./quarto-static/eric-noaa.scss]
     self-contained: true
-editor: source
+    slide-number: true
+    scrollable: true
 ---
 
 #  {background-image="quarto-static/slideteal.png" background-size="contain"}
 
 ::: {style="margin-left: 260px; margin-top: 100px; margin-right: 10px; font-size: 3.2em;"}
-Using Genetic Data to Find Kin Pairs
+Probability, Inference, and Genotype Likelihoods
 :::
 
 ::: {style="margin-left: 260px; font-size: 2em;"}
@@ -17,36 +18,230 @@ Eric C. Anderson
 :::
 
 ::: {style="margin-left: 260px;"}
-The Wildlife Society CKMR Workshop, Sunday November 6, 2022
+Conservation Genomics Workshop, Wednesday September 7, 2022
 :::
 
-## A First Slide in Quarto {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+## Overview {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
-What is up! I am just going to drone on and on here to see how far this text wraps in different contexts. Whoa! Is this long enough yet?
+### Goal: Explore and understand probabilistic genotype calling in the context of some Bayesian statistics
+
+#### Outline:
+
+-   Estimating an allele frequency from genotypes
+    -   Bayesian ideas
+    -   Directed acyclic graphs
+    -   Monte Carlo
+-   Add in uncertainty about genotypes
+    -   Another layer in the graph
+    -   Intuition for MCMC
+-   The difference between calling genotypes and propagating uncertainty.
+
+We will play around with a Shiny App to cement all three of these ideas (small-group work).
+
+# Bayesian Inference
+
+## Personal Probability {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+-   We all have different histories, biases, perspectives, and *models* the influence how we interpret data.
+-   Some simple card play.
+-   The take home message is that the probabilities we assign to different events depend on what information we have.
+
+## Probability as a measuring stick for uncertainty {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+-   It can measure a specific person's degree of uncertainty about anything.
+-   Very different from the "frequentist" idea that probabilities must be interpreted as the fraction of times an event would occur if an experiment is performed repeatedly.
+-   You can be uncertain about things that will only happen once. What is the probability...
+    -   that it will rain tomorrow?
+    -   that next year is the hottest in recorded history?
+-   You can even be uncertain about deterministic things
+    -   Trivia night
+
+It can be interesting to think of probability as a unit of measure for uncertainty.
+
+## An Interesting Aside {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+### Probability was not developed as a mathematical framework for quantifying uncertainty
+
+-   It actually had its start in correspondence between mathematicians on games of chance.
+
+::: columns
+::: {.column width="40%"}
+![](images/paste-6B000D9A.png)
+:::
+
+::: {.column width="60%"}
+Nonetheless, E.T. Jaynes provides an interesting and accessible discussion of how the system of probability as has already been developed does, indeed, arise as the unique system that satisfies a remarkably small number of desirable properties for measuring uncertainty.
+:::
+:::
+
+## Updating Beliefs Probabilistically {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+-   We saw with the card example that new information leads to updated beliefs
+-   If we want to use probability to measure uncertainty, then we should be *probabilistic* about updating our beliefs.\
+-   The reverend Thomas Bayes described this in the 1700s.
+-   Bayes' Theorem states the *posterior* of one hypothesis $H_i$, out of $k$, given data $D$ is: $$
+    P(H_i|D) = \frac{P(D|H_i)P(H_i)}{\sum_{j = 1}^k P(D|H_j)P(H_j)}
+    $$
+-   Boy! I really dislike that expression!
+
+## A Simple Conditional Probability, and DAGs {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+#### Example 1: Frequency of a genotype given an allele frequency and HWE
+
+::: columns
+::: {.column width="50%"}
+-   Suppose the $A$ allele is at frequency $p_A$ in a population,
+-   And the population is in Hardy-Weinberg equilibrium (HWE)
+-   HWE means the frequencies of genotypes are as expected if the two allelic types in an individual are independent of one another.
+:::
+
+::: {.column width="50%"}
+$$
+P(\mathrm{Individual~is}~AA|p_A) = p_A^2
+$$
+
+Which we get because the allelic types, $Y_1$ and $Y_2$, of the two gene copies are independent of one another, *given* $p_A$:
 
 $$
-\int_0^1 x^{\alpha - 1}(1-x)^{\beta-1}dx
+\begin{aligned}
+P(\mathrm{Individual~is}~AA\;|\;p_A) &= P(Y_1=A\;|\;p_A) P(Y_1=A\;|\;p_A) \\
+&= p_A p_A \\
+&= p_A^2
+\end{aligned}
 $$
+:::
+:::
 
-## Quarto {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+![](images/paste-5642225F.png)
 
-Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+## DAG Notation and Terminology {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
+![](images/paste-6091B588.png)
 
-This image got inserted by pasting!
+## A Picture of Inference {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
-## Code {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+::: columns
+::: {.column width="50%"}
 
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+<br>  
+<br>  
 
-```{r}
-#| echo: true
-#| output-location: column-fragment
-x <- 1:10
-y <- x^2
+-   What we just talked about was probability "running forward"
+-   In a DAG the arrows run from observed nodes to unobserved nodes
 
-x
-y
+------------------------------------------------------------------------
 
-plot(x,y)
+-   In most of science we are interested in *inference*
+-   I think of this as probability "running backward"
+-   In a DAG the arrows run from unobserved nodes to observed nodes
+
+* In the DAG on the bottom we have data being genotypes from $N$ individuals:
+$$
+\mathbf{Y} = (Y_{1,1}, Y_{1,2}, Y_{2,1}, \ldots Y_{N,1}, Y_{N,2})
+$$
+:::
+
+::: {.column width="50%"}
+
+```{r, echo=FALSE, out.width='200'}
+knitr::include_graphics("images/paste-5642225F.png")
 ```
+
+------------------------------------------------------------------------
+
+```{r, echo=FALSE, out.width='300'}
+knitr::include_graphics("images/paste-540C2B08.png")
+```
+
+:::
+:::
+
+
+
+## The Probability of the Data and the Likelihood Function {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+$$
+P(\boldsymbol{Y}~|~p_A) = \prod_{i=1}^N P(Y_{i,1}~|~p_A)P(Y_{i,2}~|~p_A)
+$$
+In fact, if we define each $Y$ to be 0 or 1 as follows:
+$$
+\begin{align}
+Y = 0 & ~~~~~\mbox{with probability} ~~~ 1 - p_A & ~~\mbox{(i.e., it's an}~a) \\
+Y = 1 & ~~~~~\mbox{with probability} ~~~ p_A & ~~\mbox{(i.e., it's an}~A)
+\end{align}
+$$
+Then it is not too hard to see that
+$$
+P(\boldsymbol{Y}~|~p_A) = p_A^{\sum Y_{i,j}} (1- p_A)^{2N - \sum Y_{i,j}}
+$$
+This is a probability function.  But if you consider this as a function of $p_A$ with
+$\boldsymbol{Y}$ considered as fixed, then it is often referred to as the
+_likelihood function_.
+
+![](images/paste-540C2B08.png){.absolute top=50 right=0 width="200" }
+
+## Methods of Inference {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+#### For a concrete example, let $N = 100$ diploids with 73 copies of the $A$ allele found.
+
+* _Method of the Eyeball_
+* _Method of Moments_
+* _Method of Maximum Likelihood_
+
+These all give you a _point estimate_
+
+An alternative to those, the Bayesian way is to calculate the _posterior probability_
+of $p_A$, given the data.  
+
+This simply uses the laws of probability to express our uncertainty about $p_A$ given
+the information in the sample.
+
+
+
+
+
+## Some Important Probability Rules {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+#### Two events $A$ and $B$, and we use $A$ and $B$ to refer to the outcome of each
+
+- $P(A)$ and $P(B)$ are referred to as _marginal_ probabilities.
+- The _joint_ probability of $A$ and $B$ is the probability that those _both_ two outcomes
+occurred.
+- Joint prob = marginal probability times a _conditional_
+probability:
+$$
+P(A,B) = P(A)P(B~|~A) = P(B)P(A~|~B)
+$$
+- So, conditional probabilities can be computed from the joint probability:
+$$
+P(A~|~B) = \frac{P(A,B)}{P(B)}~~~~~~~~~~~~~~~~~~~~~~~~
+P(B~|~A) = \frac{P(A,B)}{P(A)}
+$$
+
+- Thus, a much easier expression for Bayes Theorem:
+$$
+P(A~|~B) \propto P(A, B)
+$$
+with $P(A|B)$ as a function of $A$ with $B$ being the fixed "data."  
+- Joint probability typically easy to compute, then just get equality by
+knowing $P(A|B)$ must sum to one over values of $A$.
+
+
+## Bayesian Inference for $p_A$ {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+#### Back to our simple allele frequency example
+
+* We want the _posterior_ probability, $P(p_A\;|\;\mathbf{Y})$
+* We know that is proportional to the _joint_ probability,  $P(p_A, \mathbf{Y})$
+* We have the likelihood, $P(\mathbf{Y}\;|\;p_A)$
+* So, the joint probability could be obtained from that with:
+$$
+P(p_A, \mathbf{Y}) = P(\mathbf{Y}\;|\;p_A) P(p_A)
+$$
+
+#### Whoa! What the heck is the marginal probability, $P(p_A)$?
+
+* This is what is called the _prior_ distribution of $p_A$.  
+* It expresses our degree of belief about the value of $p_A$ before we look at our data.
+
+#### Bayes Theorem: The Posterior is proportional to the prior times the likelihood.

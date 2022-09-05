@@ -2,11 +2,12 @@
 
 
 
+
 ::: {#refs}
 :::
 
 
-```{r slides, include=FALSE}
+```{r slides, include=FALSE, eval=FALSE}
 options(knitr.duplicate.label = "allow")  # because our slides might have code blocks named setup
 
 # quarto does not seem to render properly if you give it a different output
