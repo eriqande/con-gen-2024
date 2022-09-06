@@ -444,21 +444,24 @@ if desired.
 The one downside of Shiny apps is that they don't run properly on the RStudio Server that has
 been set up for ConGen.  Nor will they run properly in the Remote Desktop version of the same.
 
-But this is not a huge issue, since you should be able to run it on your own computer
-with RStudio.  The procedure for that is:
+But this is not a huge issue, since you should be able to run it on **your own** computer
+with RStudio.  The procedure for that is
 
-1. Go to the Eric Anderson folder on the ConGen Box drive: [https://umt.box.com/s/n3x7v1hpqkf4h9glu41whxrqaostoqva](https://umt.box.com/s/n3x7v1hpqkf4h9glu41whxrqaostoqva)
-2. Right click (on a mac Cntrl-click) the top folder called `ngs-genotype-models`, and choose "Download" from the pop-up menu.  Or you might be able to click on the three dots to the right of that file
-and choose download.
-3. That downloads the whole folder as a zip archive.  Unzip the whole thing to a directory called `ngs-genotype-models` on your computer.
-4. Go inside that folder and double click `ngs-genotype-models.Rproj` to open the RStudio project.
-5. Within RStudio, open `001-allele-freq-estimation.Rmd`
-6. Install any packages RStudio says you might need.
-7. Then choose "Run Document" at the top of the source editor window.
+1. Open up RStudio.
+2. In the R console paste this code:
+```{.r}
+if(!("usethis" %in% rownames(installed.packages()))) {
+  install.packages("usethis")
+}
+usethis::use_course("eriqande/ngs-genotype-models")
+```
+3. You will need to answer the "Yes" response to a few questions.  This will download
+an RStudio project and open it.
+4. From this RStudio project's file browswer, open the file `001-allele-freq-estimation.Rmd`.
+5. If the message at the top of the file says you need some new packages, click the install option.
+6. Then Click the "Run Document" button.
 
-You can also download it from GitHub, if you find that easier:
 
-* [https://github.com/eriqande/ngs-genotype-models](https://github.com/eriqande/ngs-genotype-models)
 
 
 **If that does not work for some of the students**: you can go directly to the website:

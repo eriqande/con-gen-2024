@@ -254,7 +254,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <section id="preamble" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="preamble"><span class="header-section-number">1.1</span> Preamble</h2>
-<p>In years past, Mike Miller has lectured on genotype likelihoods and genotype posteriors. This year, however, we all got to hear from Mike about the coalescent, which is an incredibly important topic in conservation genomics. So, I will spend a little more time talking about genotype likelihoods and “probabilistic genotype calling.”</p>
+<p>In this session, we will spend a little time talking about genotype likelihoods and “probabilistic genotype calling.”</p>
 <p>But, I want to talk about these topics in the context of a little background on Bayesian statistics and Markov chain Monte Carlo.</p>
 <p>So, my plan for this session is to start with a simple exercise of estimating an allele frequency in a Bayesian manner.</p>
 <p>First, we’ll talk about estimating the allele frequencies alone:</p>
@@ -484,20 +484,21 @@ P(p_A~|~\boldsymbol{Y}) &amp;\propto {p_A}^{0}(1-p_A)^{0} \times p_A^{73}(1-p_A)
 <h3 data-number="1.2.13" class="anchored" data-anchor-id="shiny-interlude-1"><span class="header-section-number">1.2.13</span> Shiny Interlude #1</h3>
 <p>In fact, we can do one better than just plotting that. I’ve prepared a Shiny Notebook that lets you play with different values of the allele frequency (<span class="math inline">\(p_T\)</span> in this case—the frequency of the <span class="math inline">\(T\)</span> base at a genome position), simulate diploid genotype data from that, and then compute the posterior distribution, whilst fiddling with the prior parameters, if desired.</p>
 <p>The one downside of Shiny apps is that they don’t run properly on the RStudio Server that has been set up for ConGen. Nor will they run properly in the Remote Desktop version of the same.</p>
-<p>But this is not a huge issue, since you should be able to run it on your own computer with RStudio. The procedure for that is:</p>
+<p>But this is not a huge issue, since you should be able to run it on <strong>your own</strong> computer with RStudio. The procedure for that is</p>
 <ol type="1">
-<li>Go to the Eric Anderson folder on the ConGen Box drive: <a href="https://umt.box.com/s/n3x7v1hpqkf4h9glu41whxrqaostoqva">https://umt.box.com/s/n3x7v1hpqkf4h9glu41whxrqaostoqva</a></li>
-<li>Right click (on a mac Cntrl-click) the top folder called <code>ngs-genotype-models</code>, and choose “Download” from the pop-up menu. Or you might be able to click on the three dots to the right of that file and choose download.</li>
-<li>That downloads the whole folder as a zip archive. Unzip the whole thing to a directory called <code>ngs-genotype-models</code> on your computer.</li>
-<li>Go inside that folder and double click <code>ngs-genotype-models.Rproj</code> to open the RStudio project.</li>
-<li>Within RStudio, open <code>001-allele-freq-estimation.Rmd</code></li>
-<li>Install any packages RStudio says you might need.</li>
-<li>Then choose “Run Document” at the top of the source editor window.</li>
+<li>Open up RStudio.</li>
+<li>In the R console paste this code:</li>
 </ol>
-<p>You can also download it from GitHub, if you find that easier:</p>
-<ul>
-<li><a href="https://github.com/eriqande/ngs-genotype-models">https://github.com/eriqande/ngs-genotype-models</a></li>
-</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span>(<span class="st">"usethis"</span> <span class="sc">%in%</span> <span class="fu">rownames</span>(<span class="fu">installed.packages</span>()))) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"usethis"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_course</span>(<span class="st">"eriqande/ngs-genotype-models"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="3" type="1">
+<li>You will need to answer the “Yes” response to a few questions. This will download an RStudio project and open it.</li>
+<li>From this RStudio project’s file browswer, open the file <code>001-allele-freq-estimation.Rmd</code>.</li>
+<li>If the message at the top of the file says you need some new packages, click the install option.</li>
+<li>Then Click the “Run Document” button.</li>
+</ol>
 <p><strong>If that does not work for some of the students</strong>: you can go directly to the website: <a href="https://eriqande.shinyapps.io/001-allele-freq-estimation/">https://eriqande.shinyapps.io/001-allele-freq-estimation/</a>. But, be warned that if too many people use that link it will overwhelm my free ShinyApps account.</p>
 <p>Now, I am going to break students into break-out groups of 4 or 5 (randomly) for about 15 minutes.</p>
 <p>Take a few minutes to introduce yourselves to one another, then play with the Shiny app and talk to one another about it as you do. Maybe even work togethery to do these things:</p>
@@ -537,51 +538,51 @@ P(p_A~|~\boldsymbol{Y}) &amp;\propto {p_A}^{0}(1-p_A)^{0} \times p_A^{73}(1-p_A)
 <h3 data-number="1.3.1" class="anchored" data-anchor-id="a-vanilla-monte-carlo-sample-from-the-posterior-for-p_a"><span class="header-section-number">1.3.1</span> A “vanilla” Monte Carlo sample from the posterior for <span class="math inline">\(p_A\)</span></h3>
 <p>Even though we can compute the posterior analytically, it can still be convenient to obtain a sample from it. We can sample 1 million values from the posterior for <span class="math inline">\(p_A\)</span> like this:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pA <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="at">n =</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>, <span class="dv">74</span>, <span class="dv">128</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pA <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="at">n =</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>, <span class="dv">74</span>, <span class="dv">128</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The first 10 values of that sample look like:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pA[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pA[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 0.3226787 0.3628828 0.3728779 0.3579767 0.4075617 0.3857334 0.4572401
- [8] 0.4022111 0.3362537 0.3727767</code></pre>
+<pre><code> [1] 0.4010031 0.3504334 0.2876781 0.3459483 0.3005550 0.3469723 0.4103598
+ [8] 0.3340840 0.3624354 0.4180388</code></pre>
 </div>
 </div>
 <p>We call this a “vanilla” Monte Carlo sample because every member of the sample was independent—this is not <em>Markov chain</em> Monte Carlo.</p>
 <p>If we wanted to use the sample to approximate the full posterior, we could do that with a histogram:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(pA, <span class="at">breaks =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(pA, <span class="at">breaks =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="probinf_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>If we want the posterior mean, that is easy, too:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(pA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(pA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.3663329</code></pre>
+<pre><code>[1] 0.366283</code></pre>
 </div>
 </div>
 <p>as is the posterior median:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(pA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(pA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.3658414</code></pre>
+<pre><code>[1] 0.3658741</code></pre>
 </div>
 </div>
 <p>Or the standard deviation of the posterior distribution:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(pA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(pA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.03379817</code></pre>
+<pre><code>[1] 0.03379655</code></pre>
 </div>
 </div>
 <p>Or, the 90%-equal-tail Credible Interval</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(pA, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(pA, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       5%       95% 
-0.3115242 0.4227205 </code></pre>
+0.3114234 0.4225508 </code></pre>
 </div>
 </div>
 <p>All of those quantities could have been obtained analytically in this case, but it is a lot simpler to just work with a Monte Carlo sample because the operations are the same with every Monte Carlo sample (which is not necessarily true of every analytical distribution…).</p>
@@ -590,11 +591,11 @@ P(p_A~|~\boldsymbol{Y}) &amp;\propto {p_A}^{0}(1-p_A)^{0} \times p_A^{73}(1-p_A)
 <h3 data-number="1.3.2" class="anchored" data-anchor-id="transformations-are-simple-with-a-monte-carlo-sample"><span class="header-section-number">1.3.2</span> Transformations are simple with a Monte Carlo sample</h3>
 <p>Imagine for a moment that what you really wanted to estimate was the probability that, if you sampled three individuals, in sequence, from the population, the first one would be homozygous <span class="math inline">\(AA\)</span>, the second one would be heterozygous <span class="math inline">\(Aa\)</span> and the third one would be homozygous <span class="math inline">\(aa\)</span>. Since we are being Bayesians here, we will want to compute the posterior distribution of that probability given the observed data. This is something that would be quite messy to do analytically, but it is easy to use the Monte Carlo sample to do it. Clearly, for a given <span class="math inline">\(p_A\)</span>, the probability of the sequence (<span class="math inline">\(AA\)</span>, <span class="math inline">\(Aa\)</span>, <span class="math inline">\(aa\)</span>) is <span class="math inline">\(p_A^2\times 2 p_A (1-p_A) \times (1-p)^2\)</span>. So, the posterior distribution of that quantity is simply:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>three_geno_seq_posterior <span class="ot">&lt;-</span> pA<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> <span class="dv">2</span> <span class="sc">*</span> pA <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> pA) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> pA)<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>three_geno_seq_posterior <span class="ot">&lt;-</span> pA<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> <span class="dv">2</span> <span class="sc">*</span> pA <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> pA) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> pA)<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And we can look at it:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(three_geno_seq_posterior, <span class="at">breaks =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(three_geno_seq_posterior, <span class="at">breaks =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="probinf_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>

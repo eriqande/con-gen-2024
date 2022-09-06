@@ -857,4 +857,8 @@ This provides a complete BWA-GATK workflow including an arbitrary number of "boo
 quite a sound investment.
 
 
+#### One final step on the command line:
 
+```{.sh}
+conda deactivate
+```

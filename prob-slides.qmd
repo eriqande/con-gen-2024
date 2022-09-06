@@ -38,7 +38,7 @@ Conservation Genomics Workshop, Wednesday September 7, 2022
 
 We will play around with a Shiny App to cement all three of these ideas (small-group work).
 
-# Bayesian Inference
+# Bayesian Inference {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
 ## Personal Probability {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
@@ -122,9 +122,8 @@ $$
 
 ::: columns
 ::: {.column width="50%"}
-
-<br>  
-<br>  
+<br>\
+<br>
 
 -   What we just talked about was probability "running forward"
 -   In a DAG the arrows run from observed nodes to unobserved nodes
@@ -132,17 +131,17 @@ $$
 ------------------------------------------------------------------------
 
 -   In most of science we are interested in *inference*
+
 -   I think of this as probability "running backward"
+
 -   In a DAG the arrows run from unobserved nodes to observed nodes
 
-* In the DAG on the bottom we have data being genotypes from $N$ individuals:
-$$
-\mathbf{Y} = (Y_{1,1}, Y_{1,2}, Y_{2,1}, \ldots Y_{N,1}, Y_{N,2})
-$$
+-   In the DAG on the bottom we have data being genotypes from $N$ individuals: $$
+    \boldsymbol{Y} = (Y_{1,1}, Y_{1,2}, Y_{2,1}, \ldots Y_{N,1}, Y_{N,2})
+    $$
 :::
 
 ::: {.column width="50%"}
-
 ```{r, echo=FALSE, out.width='200'}
 knitr::include_graphics("images/paste-5642225F.png")
 ```
@@ -152,96 +151,370 @@ knitr::include_graphics("images/paste-5642225F.png")
 ```{r, echo=FALSE, out.width='300'}
 knitr::include_graphics("images/paste-540C2B08.png")
 ```
-
 :::
 :::
-
-
 
 ## The Probability of the Data and the Likelihood Function {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
 $$
 P(\boldsymbol{Y}~|~p_A) = \prod_{i=1}^N P(Y_{i,1}~|~p_A)P(Y_{i,2}~|~p_A)
-$$
-In fact, if we define each $Y$ to be 0 or 1 as follows:
-$$
+$$ In fact, if we define each $Y$ to be 0 or 1 as follows: $$
 \begin{align}
 Y = 0 & ~~~~~\mbox{with probability} ~~~ 1 - p_A & ~~\mbox{(i.e., it's an}~a) \\
 Y = 1 & ~~~~~\mbox{with probability} ~~~ p_A & ~~\mbox{(i.e., it's an}~A)
 \end{align}
-$$
-Then it is not too hard to see that
-$$
+$$ Then it is not too hard to see that $$
 P(\boldsymbol{Y}~|~p_A) = p_A^{\sum Y_{i,j}} (1- p_A)^{2N - \sum Y_{i,j}}
-$$
-This is a probability function.  But if you consider this as a function of $p_A$ with
-$\boldsymbol{Y}$ considered as fixed, then it is often referred to as the
-_likelihood function_.
+$$ This is a probability function. But if you consider this as a function of $p_A$ with $\boldsymbol{Y}$ considered as fixed, then it is often referred to as the *likelihood function*.
 
-![](images/paste-540C2B08.png){.absolute top=50 right=0 width="200" }
+![](images/paste-540C2B08.png){.absolute top="50" right="0" width="200"}
 
 ## Methods of Inference {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
 #### For a concrete example, let $N = 100$ diploids with 73 copies of the $A$ allele found.
 
-* _Method of the Eyeball_
-* _Method of Moments_
-* _Method of Maximum Likelihood_
+-   *Method of the Eyeball*
+-   *Method of Moments*
+-   *Method of Maximum Likelihood*
 
-These all give you a _point estimate_
+These all give you a *point estimate*
 
-An alternative to those, the Bayesian way is to calculate the _posterior probability_
-of $p_A$, given the data.  
+An alternative to those, the Bayesian way is to calculate the *posterior probability* of $p_A$, given the data.
 
-This simply uses the laws of probability to express our uncertainty about $p_A$ given
-the information in the sample.
-
-
-
-
+This simply uses the laws of probability to express our uncertainty about $p_A$ given the information in the sample.
 
 ## Some Important Probability Rules {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
 #### Two events $A$ and $B$, and we use $A$ and $B$ to refer to the outcome of each
 
-- $P(A)$ and $P(B)$ are referred to as _marginal_ probabilities.
-- The _joint_ probability of $A$ and $B$ is the probability that those _both_ two outcomes
-occurred.
-- Joint prob = marginal probability times a _conditional_
-probability:
-$$
-P(A,B) = P(A)P(B~|~A) = P(B)P(A~|~B)
-$$
-- So, conditional probabilities can be computed from the joint probability:
-$$
-P(A~|~B) = \frac{P(A,B)}{P(B)}~~~~~~~~~~~~~~~~~~~~~~~~
-P(B~|~A) = \frac{P(A,B)}{P(A)}
-$$
+-   $P(A)$ and $P(B)$ are referred to as *marginal* probabilities.
 
-- Thus, a much easier expression for Bayes Theorem:
-$$
-P(A~|~B) \propto P(A, B)
-$$
-with $P(A|B)$ as a function of $A$ with $B$ being the fixed "data."  
-- Joint probability typically easy to compute, then just get equality by
-knowing $P(A|B)$ must sum to one over values of $A$.
+-   The *joint* probability of $A$ and $B$ is the probability that those *both* two outcomes occurred.
 
+-   Joint prob = marginal probability times a *conditional* probability: $$
+    P(A,B) = P(A)P(B~|~A) = P(B)P(A~|~B)
+    $$
+
+-   So, conditional probabilities can be computed from the joint probability: $$
+    P(A~|~B) = \frac{P(A,B)}{P(B)}~~~~~~~~~~~~~~~~~~~~~~~~
+    P(B~|~A) = \frac{P(A,B)}{P(A)}
+    $$
+
+-   Thus, a much easier expression for Bayes Theorem: $$
+    P(A~|~B) \propto P(A, B)
+    $$ with $P(A|B)$ as a function of $A$ with $B$ being the fixed "data."\
+
+-   Joint probability typically easy to compute, then just get equality by knowing $P(A|B)$ must sum to one over values of $A$.
 
 ## Bayesian Inference for $p_A$ {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
 #### Back to our simple allele frequency example
 
-* We want the _posterior_ probability, $P(p_A\;|\;\mathbf{Y})$
-* We know that is proportional to the _joint_ probability,  $P(p_A, \mathbf{Y})$
-* We have the likelihood, $P(\mathbf{Y}\;|\;p_A)$
-* So, the joint probability could be obtained from that with:
-$$
-P(p_A, \mathbf{Y}) = P(\mathbf{Y}\;|\;p_A) P(p_A)
-$$
+-   We want the *posterior* probability, $P(p_A\;|\;\boldsymbol{Y})$
+-   We know that is proportional to the *joint* probability, $P(p_A, \boldsymbol{Y})$
+-   We have the likelihood, $P(\boldsymbol{Y}\;|\;p_A)$
+-   So, the joint probability could be obtained from that with: $$
+    P(p_A, \boldsymbol{Y}) = P(\boldsymbol{Y}\;|\;p_A) P(p_A)
+    $$
 
 #### Whoa! What the heck is the marginal probability, $P(p_A)$?
 
-* This is what is called the _prior_ distribution of $p_A$.  
-* It expresses our degree of belief about the value of $p_A$ before we look at our data.
+-   This is what is called the *prior* distribution of $p_A$.\
+-   It expresses our degree of belief about the value of $p_A$ before we look at our data.
 
 #### Bayes Theorem: The Posterior is proportional to the prior times the likelihood.
+
+## A family of priors for $p_A$ {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+Since $p_A$ is a proportion, an obvious choice for prior would be a beta distribution. The beta distribution gives a continuous prior distribution on a value that is between 0 and 1. It has two parameters, often called $\alpha_1$ and $\alpha_2$. Here are some examples:
+
+```{r, echo=FALSE, message=FALSE}
+library(tidyverse)
+xs <- seq(0,1, by = 0.001)
+atib <- list(
+  `a1 = 1/10;  a2 = 1/10` = tibble(p_A = xs, density = dbeta(xs, 0.1, 0.1)),
+  `a1 = 1/2;  a2 = 1/2` = tibble(p_A = xs, density = dbeta(xs, 0.5, 0.5)),
+  `a1 = 1;  a2 = 1` = tibble(p_A = xs, density = dbeta(xs, 1, 1)),
+  `a1 = 5;  a2 = 5` = tibble(p_A = xs, density = dbeta(xs, 5, 5)),
+  `a1 = 10;  a2 = 2` = tibble(p_A = xs, density = dbeta(xs, 10, 2))
+) %>%
+  bind_rows(.id = "parameters")
+
+g <- ggplot(atib, aes(x = p_A, y = density, colour = parameters)) +
+  geom_line() +
+  ylim(0, 4.3)
+
+g
+```
+
+## The beta distribution {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+The beta density for a random variable $X$ has the form: $$
+p(x | \alpha_1, \alpha_2) = \frac{\Gamma(\alpha_1 + \alpha_2)}{\Gamma(\alpha_1)\Gamma(\alpha_2)}
+x^{\alpha_1 - 1}(1-x)^{\alpha_2 - 1}
+$$ The part that looks hairy is a few Gamma functions. Don't worry about those---it is a constant. The important part (the "kernel", as they say...) is: $$
+x^{\alpha_1 - 1}(1-x)^{\alpha_2 - 1}
+$$ Or, if we wanted this to a be a prior on $p_A$, the prior would be proportional to: $$
+{p_A}^{\alpha_1 - 1}(1-p_A)^{\alpha_2 - 1}
+$$ 
+And, if we wanted to be even more specific, we could choose $\alpha_1 = \alpha_2 = 1$ to give ourselves a uniform prior which is proportional to 1: 
+$$
+P(p_A) \propto {p_A}^{1 - 1}(1-p_A)^{1 - 1} = {p_A}^{0}(1-p_A)^{0} = 1
+$$
+
+## Our Inference DAG, Bayesian Version {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+::: columns
+::: {.column width="60%"}
+-   To be a Bayesian, your DAG can't have any unobserved nodes with no parents.
+-   You must add parents which represent the prior.
+:::
+:::
+
+![](diagrams/infer1-with-prior.png){.absolute top="50" right="60" width="400"}
+
+## The posterior distribution of $p_A$ {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+#### The posterior is proportional to the likelihood times the prior
+
+-   Likelihood: $P(\boldsymbol{Y}~|~p_A) = p_A^{73} (1- p_A)^{127}$
+-   Prior: $P(p_A) \propto {p_A}^{0}(1-p_A)^{0} = 1$
+-   Joint: $$
+    \begin{aligned}
+    P(\boldsymbol{Y}, p_A) &\propto  p_A^{73} (1- p_A)^{127} \times {p_A}^{0}(1-p_A)^{0} \\
+    &\propto p_A^{74-1} (1- p_A)^{128-1}
+    \end{aligned}
+    $$ Which we recognize as a beta distibution with parameters 74 and 128.
+
+## The posterior distribution of $p_A$ {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+#### Here is what the posterior looks like
+
+```{r, echo=FALSE, message=FALSE}
+xs <- seq(0, 1, by = 0.001)
+btib <- tibble(p_A = xs,
+               density = dbeta(xs, 74, 128))
+g <- ggplot(btib, aes(x = p_A, y = density)) +
+  geom_line() +
+  ggtitle("Posterior Distribution of p_A")
+g
+```
+
+## Shiny Interlude #1 {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+We can't run shiny on the ConGen RStudio Server
+
+But you can run it on **your own** computer with RStudio. The procedure for that is:
+
+1.  Open up RStudio.
+2.  In the R console paste this code:
+
+``` r
+if(!("usethis" %in% rownames(installed.packages()))) {
+  install.packages("usethis")
+}
+usethis::use_course("eriqande/ngs-genotype-models")
+```
+
+3.  You will need to answer the "Yes" response to a few questions. This will download an RStudio project and open it.
+4.  From this RStudio project's file browswer, open the file `001-allele-freq-estimation.Rmd`.
+5.  If the message at the top of the file says you need some new packages, click the install option.
+6.  Then Click the "Run Document" button.
+
+**If that does not work for some of the students**: you can go directly to the website: <https://eriqande.shinyapps.io/001-allele-freq-estimation/>. But, be warned that if too many people use that link it will overwhelm my free ShinyApps account.
+
+## Breakout Groups {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+Take a few minutes to introduce yourselves to one another, then play with the Shiny app and talk to one another about it as you do. Maybe even work together to do these things:
+
+-   Input beta distribution parameters to get these different shapes:
+    -   an upward facing U
+    -   a flat line
+    -   a curve that keeps going up at one of the boundaries
+    -   a hill with a peak at 0.3
+-   Observe how the posterior distribution changes when sample size changes.
+-   With a true allele frequency of $p_T = 0$, with a sample size of 50 diploids, find values of the prior parameters that will give you a posterior centered on 0.5 (in other words a ridiculously heavy prior...)
+
+I'll try to say hello in the different breakout rooms.
+
+# Summarizing and Sampling from the Posterior Distribution {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+## To The Bayesian, the Posterior Distribution is Everything {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+-   The posterior tells you about your uncertainty for a parameter (like $p_A$) that captures all the information in the data.
+-   Often it gets summarized into the posterior
+    -   Mean
+    -   Median
+    -   Mode
+    -   Credible interval But, those are all summaries and don't have all the information that the full posterior gives you.
+-   Sometimes posterior distributions are complex and you have to learn about them by *sampling from them* (unlike in the allele frequency case where we derived it analytically).
+
+## Sampling from the Posterior {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+-   The beta posterior for allele frequency is analytically tractable, but...
+-   As an example, we will see what it is like to do "Vanilla" Monte Carlo, by sampling from our beta posterior.
+
+```{r}
+#| echo: true
+pA <- rbeta(n = 10^6, 74, 128)
+```
+
+The first 10 values of that sample look like:
+
+```{r}
+#| echo: true
+pA[1:10]
+```
+
+We call this a "vanilla" Monte Carlo sample because every member of the sample was independent---this is not *Markov chain* Monte Carlo.
+
+If we wanted to use the sample to approximate the full posterior, we could do that with a histogram:
+
+```{r}
+#| echo: true
+hist(pA, breaks = 100)
+```
+
+If we want the posterior mean, that is easy, too:
+
+```{r}
+#| echo: true
+mean(pA)
+```
+
+as is the posterior median:
+
+```{r}
+#| echo: true
+median(pA)
+```
+
+Or the standard deviation of the posterior distribution:
+
+```{r}
+#| echo: true
+sd(pA)
+```
+
+Or, the 90%-equal-tail Credible Interval
+
+```{r}
+#| echo: true
+quantile(pA, probs = c(0.05, 0.95))
+```
+
+All of those quantities could have been obtained analytically in this case, but it is a lot simpler to just work with a Monte Carlo sample because the operations are the same with every Monte Carlo sample (which is not necessarily true of every analytical distribution...).
+
+# Genotype Likelihoods and Inference From Read Data {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+## Probabilistic Genotype Calling / Allele frequency estimation {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+#### We will now complicate our simple allele frequency model
+
+-   First, we are looking at a single known SNP location, where the base in the sequence is either a $C$ or a $T$.
+-   We no longer observe the genotype without any error or uncertainty.
+-   Rather, we observe the sequence of reads, each one a copy of one or the other of the two homologous gene copies of the genotype.
+-   There is also some sequencing error!
+
+## We Have Merely Added an Extra Layer of Nodes in our DAG {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+-   $\boldsymbol{R}_{i}$ is a two-vector that records the number of $C$ and $T$ reads in individual $i$.
+
+![](images/paste-CFA9E398.png)
+
+## The conditional probability $P(\boldsymbol{R}_i~|~Y_{i,1}, Y_{i,2}, \mu)$ {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+#### This thing turns out to be pretty easy. It can be broken down into cases:
+
+1.  $i$ is homozygous for $C$ (i.e., $Y_{i,1} = Y_{i,2} = C$):
+
+2.  $i$ is homozygous for $T$ (i.e., $Y_{i,1} = Y_{i,2} = T$):
+
+3.  $i$ is heterozygous (i.e., $(Y_{i,1} = C, Y_{i,2} = T)$
+
+#### These probabilities, when viewed as a function of the genotype, with the read data fixed, are called the *genotype likelihoods*. {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+## A picture of this {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+![](figures/genotypes_and_reads.svg){.absolute left="0" width="200%"}
+
+## Some Intuition of How to Sample from the Posterior (MCMC) {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+#### Get a sample for allele frequency and the latent genotypes
+
+![](images/paste-CFA9E398.png)
+
+## What is the Markov Chain part of MCMC? {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+![](slide_grabs/random-walk.png)
+
+## Playing with genotype likelihoods and genotype posteriors {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+The genotype likelihoods can be calculated from the read data alone.
+
+But, if we combine that with allele frequencies in our model:
+
+![](images/paste-CFA9E398.png){fig-align="center" width="1700"}
+
+...then we can also compute the posterior probability (by MCMC sampling) of each genotype. If you are sampling from a single population, then this provides a *much* better estimate of the true genotype.
+
+* Coming up, we have another Shiny app to play with this.
+
+
+## Shiny Interlude #2 {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+From the `ngs-genotype-models` RStudio project that you downloaded previously:
+
+- Open `002-genotype-likelihoods-from-reads.Rmd`
+- Install any packages that RStudio tells you that you might need.
+- Hit the "Run Document" Button
+
+If this doesn't work for you, then you can access the Shiny app over the web:
+[https://eriqande.shinyapps.io/002-genotype-likelihoods-from-reads/](https://eriqande.shinyapps.io/002-genotype-likelihoods-from-reads/)
+
+- Then you can simulate genotypes, as before, but now, you can
+simulate reads from those genotypes, and then compute genotype posteriors using
+MCMC.
+
+
+## Back to breakout rooms...some questions {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+1. What are the likelihoods for the three different possible genotypes when the read depth is 0 for an individual?
+2. What does it take for the likelihood to be highest for the heterozygote hypothesis?
+3. Is it more likely that a true heterozygote genotype will have a posterior probability that is highest for the hyothesis of "common homozygote" or the hypotheses of "rare homozygote."
+4. How does the posterior distribution of the allele frequency computed from read data (the transparent blue histogram) compare to the posterior distribution if you know the genotypes exactly (the black line)?  How does this change when read depth is increased or decreased?
+5. If you only have a single read from a heterozygous individual, will that individual's maximum likelihood genotype ever be "heterozygote."  What about its maximum _a-posteriori_ genotype? What are the conditions that lead to the heterozygous individual with only a single read having a high posterior probability of being a heterozygote?
+6. When read depths are low, even if you are calling genotypes using the highest posterior probability, do you expect the results to be very accurate?
+
+There are more questions for thought at the bottom of the Shiny App Notebook, too.
+
+
+
+# One last exercise if we have time {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+
+## Propagating Uncertainty {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+You will often hear that using genotype likelihoods allows you to "propagate uncertainty"
+to downstream analyses.
+
+This is good practice---it can help you to not underestimate your uncertainty.
+
+
+
+
+## Shiny Interlude #3 {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+Our third exercise with a ShinyApp addresses this question, revealing
+some of the unfortunate things that can happen if you call genotypes from low
+coverage sequencing data and you treat them as known/certain.
+
+From the `ngs-genotype-models` RStudio project that you downloaded previously:
+
+- Open `003-read-inference-gsi.Rmd`
+- Install any packages that RStudio tells you that you might need. 
+- Hit the "Run Document" Button
+
+(If this doesn't work for you, then you can access the Shiny app over the web:
+[https://eriqande.shinyapps.io/003-read-inference-gsi/](https://eriqande.shinyapps.io/003-read-inference-gsi/)
+)

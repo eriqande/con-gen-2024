@@ -3,5 +3,6 @@
 .RData
 .Ruserdata
 .DS_Store
-
 /.quarto/
+prob-slides.html
+snake-slides.html
