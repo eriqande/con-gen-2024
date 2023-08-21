@@ -1,7 +1,7 @@
 # Overview/Welcome {.unnumbered}
 
 This is a Quarto Book that holds most of the materials related to
-Eric C. Anderson's presentation at ConGen 2022.
+Eric C. Anderson's presentations at ConGen 2023.
 
 This year Eric is giving two different presentations:
 
@@ -17,8 +17,8 @@ chapters can be accessed from the contents links to the left of the page.
 There are also slides that Eric will be using during the presentations. They
 were made using Quarto's `revealjs` format, and can be accessed here:
 
-* [Probability, Inference and Genotype Likelihoods LECTURE SLIDES](https://eriqande.github.io/con-gen-2022/slides/prob-slides.html)
-* [Snakemake Introduction LECTURE SLIDES](https://eriqande.github.io/con-gen-2022/slides/snake-slides.html)
+* [Probability, Inference and Genotype Likelihoods LECTURE SLIDES](https://eriqande.github.io/con-gen-2023/slides/prob-slides.html)
+* [Snakemake Introduction LECTURE SLIDES](https://eriqande.github.io/con-gen-2023/slides/snake-slides.html)
 
 If you haven't heard about Quarto yet, it is RStudio's successor to RMarkdown
 for making book, notebooks, and slide presentations.  To learn more about Quarto books visit <https://quarto.org/docs/books>.

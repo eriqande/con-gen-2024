@@ -3,9 +3,9 @@ project:
   output-dir: docs
 
 book:
-  title: "Con-Gen-2022"
+  title: "Con-Gen-2023"
   author: "Eric C. Anderson"
-  date: "8/27/2022"
+  date: "8/28/2023"
   chapters:
     - index.qmd
     - probinf.qmd
