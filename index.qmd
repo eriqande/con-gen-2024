@@ -17,11 +17,12 @@ chapters can be accessed from the contents links to the left of the page.
 There are also slides that Eric will be using during the presentations. They
 were made using Quarto's `revealjs` format, and can be accessed here:
 
+* [Coalescent LECTURE SLIDES](https://eriqande.github.io/con-gen-2023/slides/coal-slides.html)
 * [Probability, Inference and Genotype Likelihoods LECTURE SLIDES](https://eriqande.github.io/con-gen-2023/slides/prob-slides.html)
 * [Snakemake Introduction LECTURE SLIDES](https://eriqande.github.io/con-gen-2023/slides/snake-slides.html)
 
 If you haven't heard about Quarto yet, it is RStudio's successor to RMarkdown
-for making book, notebooks, and slide presentations.  To learn more about Quarto books visit <https://quarto.org/docs/books>.
+for making books, notebooks, and slide presentations.  To learn more about Quarto books visit <https://quarto.org/docs/books>.
 
 
 Finally, as an aside. If you are starting to get into genomics and bioinformatics,
