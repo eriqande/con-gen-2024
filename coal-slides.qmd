@@ -1,0 +1,41 @@
+---
+format: 
+  revealjs:
+    theme: [default, ./quarto-static/eric-noaa.scss]
+    self-contained: true
+    slide-number: true
+    scrollable: true
+---
+
+#  {background-image="quarto-static/slideteal.png" background-size="contain"}
+
+::: {style="margin-left: 260px; margin-top: 100px; margin-right: 10px; font-size: 3.2em;"}
+The Coalescent
+:::
+
+::: {style="margin-left: 260px; font-size: 2em;"}
+Eric C. Anderson
+:::
+
+::: {style="margin-left: 260px;"}
+Conservation Genomics Workshop, Monday August 28, 2023
+:::
+
+## Overview {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+### Goal: Introduce the Coalescent and convey why it is a crucial model for understanding genetic variation
+
+#### Outline:
+
+-   Deriving the coalescent from the Wright-Fisher model.
+    -   This
+    -   That
+-   Expected properties of coalescent trees
+    -   Yep
+-   Mutations on the coalescent
+    -   OK
+-   The site frequency spectrum
+
+
+
+We will play around with a Shiny App to cement all three of these ideas (small-group work).
