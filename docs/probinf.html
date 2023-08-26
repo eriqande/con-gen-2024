@@ -495,8 +495,8 @@ P(p_A~|~\boldsymbol{Y}) &amp;\propto {p_A}^{0}(1-p_A)^{0} \times p_A^{73}(1-p_A)
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pA[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 0.3542826 0.3188437 0.3784252 0.3640986 0.3553216 0.3258621 0.3380789
- [8] 0.3640604 0.4005577 0.4057155</code></pre>
+<pre><code> [1] 0.3727846 0.4275731 0.3750369 0.3945403 0.3489869 0.3323300 0.4281498
+ [8] 0.3566142 0.3577211 0.3591492</code></pre>
 </div>
 </div>
 <p>We call this a “vanilla” Monte Carlo sample because every member of the sample was independent—this is not <em>Markov chain</em> Monte Carlo.</p>
@@ -511,21 +511,21 @@ P(p_A~|~\boldsymbol{Y}) &amp;\propto {p_A}^{0}(1-p_A)^{0} \times p_A^{73}(1-p_A)
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(pA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.3663201</code></pre>
+<pre><code>[1] 0.366302</code></pre>
 </div>
 </div>
 <p>as is the posterior median:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(pA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.3658788</code></pre>
+<pre><code>[1] 0.3658866</code></pre>
 </div>
 </div>
 <p>Or the standard deviation of the posterior distribution:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(pA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.03383456</code></pre>
+<pre><code>[1] 0.03379342</code></pre>
 </div>
 </div>
 <p>Or, the 90%-equal-tail Credible Interval</p>
@@ -533,7 +533,7 @@ P(p_A~|~\boldsymbol{Y}) &amp;\propto {p_A}^{0}(1-p_A)^{0} \times p_A^{73}(1-p_A)
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(pA, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       5%       95% 
-0.3114032 0.4228065 </code></pre>
+0.3114856 0.4226150 </code></pre>
 </div>
 </div>
 <p>All of those quantities could have been obtained analytically in this case, but it is a lot simpler to just work with a Monte Carlo sample because the operations are the same with every Monte Carlo sample (which is not necessarily true of every analytical distribution…).</p>

@@ -7,6 +7,8 @@ format:
     scrollable: true
 ---
 
+\newcommand{\Exp}{\mathbb{E}}
+
 #  {background-image="quarto-static/slideteal.png" background-size="contain"}
 
 ::: {style="margin-left: 260px; margin-top: 100px; margin-right: 10px; font-size: 3.2em;"}
@@ -27,15 +29,386 @@ Conservation Genomics Workshop, Monday August 28, 2023
 
 #### Outline:
 
--   Deriving the coalescent from the Wright-Fisher model.
-    -   This
-    -   That
+-   Deriving the coalescent from the Wright-Fisher model
+    -   R-notebook interlude: the exponential and geometric distributions
 -   Expected properties of coalescent trees
-    -   Yep
+    -   Expected interval times
+    -   Expected total branch lengths
+-   Shapes of the coalescent under different demographic scenarios
+    -   Hands-on: simulating and visualizing coalescent trees
 -   Mutations on the coalescent
-    -   OK
+    -   Group activity: "Find your branch"
 -   The site frequency spectrum
+    -   Hands-on: simulating 1-D SFS from different demographic scenarios
+
+## The Wright Fisher model {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+### A simple model for the random process of genes getting from one generation to the next in a population
+
+::: columns
+::: {.column width="50%"}
+![](images/wf-bucket.png)
+:::
+
+::: {.column width="50%"}
+#### Assumptions
+
+- Population of constant size
+- No selection
+- Haploid organisms (diploids are treated) as $2N$ haploids
+- No sexes
+- Next generation is obtained by sampling from replacement from
+  amongst the gene copies of the previous generation
+
+:::
+:::
 
 
 
-We will play around with a Shiny App to cement all three of these ideas (small-group work).
+
+
+
+## The Wright Fisher model. 40 diploids for 10 generations {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+![](images/wf-spaghetti.png)
+
+
+
+
+
+
+## The Wright Fisher model. Same thing, but re-ordered {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+![](images/wf-reordered.png)
+
+
+
+
+
+
+## The Wright Fisher model. Colored Alleles {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+![](images/wf-alleles-1.png)
+
+
+
+
+
+## The Wright Fisher model. Focus on a sample {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+![](images/wf-lineages-1.png)
+
+
+
+
+
+
+## A Model With Higher Variance in Repro. Succ. {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+![](images/wf-alleles-2.png)
+
+
+
+
+
+## Lineages Coalesce Faster, here {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+![](images/wf-lineages-2.png)
+
+
+
+
+## Looks like a Smaller Wright-Fisher population {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+
+
+::: columns
+::: {.column width="25%"}
+![](images/wf-small.png)
+:::
+
+::: {.column width="50%"}
+- Changes in allele frequencies (or merging of lineages)
+in that non-WF population happens at the same rate as you
+would expect in a Wright-Fisher population of smaller size.
+
+- The _effective size_ of a real populations ($N_e$) is the
+size of an ideal (i.e., Wright-Fisher) population that has
+similar "genetic behavior" as the real population.
+
+- So, results we obtain with the W-F model can be applied to
+real populations by using their effective size.
+
+:::
+:::
+
+
+
+
+
+
+
+## Lineages in a Bigger Population for more Generations {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+![](images/wf-big-lineages.png)
+
+
+
+## The Coalescent Describes The Random Process of Lineages Finding Common Ancestors
+
+- Focuses only on the properties of _sampled_ genes/sequences
+- Need not consider all the grey individuals (great for simulation)
+- Particularly useful for _sequence data_
+    - So, think of each of these colored balls as a segment of DNA being
+    copied and handed down from one generation to the next.
+- Is pretty easy to derive from the Wright-Fisher model
+- Ultimately, understanding the coalescent helps you to understand how
+different demographic or evolutionary effects will change the genetic data 
+you expect to see from populations that you study
+
+
+
+## Let's derive the coalescent from the W-F model
+
+- **Start small---focus first on a sample of two gene copies**:
+- Consider two gene copies and trace their **lineages** _backwards_ in time:
+![](images/wf-2-gen.png)
+- Terminology: sampled gene copies in the present become lineages that
+travel through gene copies present in previous generations
+- Two lineages _coalesce_ in the generation that their common ancestor
+lived in.
+![](images/wf-2-gen-reord.png)
+
+
+## Simple probabilities
+
+Let there be $2N$ haploids ($N$ diploids) in a  Wright-Fisher population.
+
+  
+
+The probability that two lineages coalesce (arose from a common ancestor)
+one generation in the past is:
+$$
+\frac{1}{2N}
+$$
+The probability that they don't coalesce one generation in the past is simply:
+$$
+1 - \frac{1}{2N}
+$$
+So, the probability that two lineages coalesce after $t$ generations is
+$$
+\biggl(1 - \frac{1}{2N}\biggr)^{t - 1}\biggl(\frac{1}{2N}\biggr)
+$$
+
+This is a _geometric distribution_.
+
+
+## The geometric distribution is well-approximated by an exponential distribution with the same mean
+
+::: columns
+::: {.column width="65%"}
+![](images/geom-and-exp.png)
+:::
+
+::: {.column width="35%"}
+- So, thinking in continuous time, we can model the waiting time until
+a pair of lineages coalesces as an exponential R.V. with mean $2N$.
+
+- An R-notebook that explores this approximation is available at:
+[https://eriqande.github.io/coalescent-hands-on/001-exp-approx-to-geometric.nb.html](https://eriqande.github.io/coalescent-hands-on/001-exp-approx-to-geometric.nb.html)
+:::
+:::
+
+
+
+## With $k>2$ lineages, we wait until the first pair coalesces, and then repeat with one less lineage
+
+- With $k$ lineages there are $\frac{k(k-1)}{2}$ _pairs_ of lineages
+- Each pair of lineages is independently^[This is one of the interesting assumptions of coalescent that can break down when populations are very small or variance in reproductive success is very large.] waiting to
+coalesce as we go back in time.
+
+$$
+\circ~~~~~~~~~~~~
+\circ~~~~~~~~~~~~
+\circ~~~~~~~~~~~~
+\circ~~~~~~~~~~~~
+\circ~~~~~~~~~~~~
+\circ~~~~~~~~~~~~
+\circ~~~~~~~~~~~~
+\circ~~~~~~~~~~~~
+\circ~~~~~~~~~~~~
+\circ
+$$
+
+The time to the coalescence of the first coalescing pair has an
+exponential distribution with mean:
+$$
+2N\frac{2}{k(k-1)} = \frac{4N}{k(k-1)}
+$$
+After that first pair coalesces, the two lineages involved become a
+single lineage and then the process waits for the first coalescence
+between a pair of $k-1$ lineages.
+
+And so forth.  
+
+The last two extant lineages coalesce into the "most recent common ancestor" (MRCA) of the sample
+
+
+
+
+
+## The Anatomy of a Coalescent Tree
+
+::: columns
+::: {.column width="70%"}
+
+![](images/coalescent-10.svg)
+:::
+:::{.column width="30%"}
+- Let $T_k$ be the length of time (number of generations) during which
+there are $k$ extant lineages in the sample.
+- To the left, $T_{10}$ is the time until the _first_ pair of sampled
+gene copies coalesces.
+- $T_\mathrm{MRCA}$ is the time to the most recent common ancestor.
+    -   i.e., the time it takes for all the lineages to have coalesced
+- Recall:
+$$
+\Exp T_k = \frac{4N}{k(k-1)}
+$$
+:::
+:::
+
+
+
+
+
+## Vertical Lines are _Generations_
+
+::: columns
+::: {.column width="70%"}
+
+![](images/coalescent-10.svg)
+:::
+:::{.column width="30%"}
+- I like to think of the vertical lines (the _branches_) in the coalescent
+as strings of beads---each bead is a generation, and there can be a lot
+of them.
+
+- Each generation = a meiosis in the lineage
+
+- What can happen during meiosis? (mutation!)
+
+- Neutral mutations do not affect the shape of the tree
+
+- This is the _neutral_ coalescent.  (Selection renders things
+much more difficult.)
+:::
+:::
+
+
+
+
+
+
+
+
+
+## Expected Properties of the Coalescent with $n$ tips
+
+### Expected time to the MRCA
+
+::: columns
+::: {.column width="58%"}
+
+![](images/coalescent-10.svg)
+:::
+:::{.column width="42%"}
+
+$$
+\begin{aligned}
+\Exp T_\mathrm{MRCA} &= \Exp\biggl[T_2 + T_3 + \cdots + T_n\biggr] \\
+  &= \sum_{k=2}^n \frac{4N}{k(k-1)} \\
+  &= 4N \sum_{k=2}^n \biggl( \frac{1}{k-1} - \frac{1}{k}\biggr) \\
+  &= 4N\biggl(1 - \frac{1}{n}\biggr)
+\end{aligned}
+$$
+
+- Wow!  Even with a huge sample of gene copies (large $n$), the expected time to the MRCA is no more than twice that of a sample of 2 gene copies. 
+
+:::
+:::
+
+
+
+
+
+
+
+
+
+
+## Expected Properties of the Coalescent with $n$ tips
+
+### Expected total branch length
+
+::: columns
+::: {.column width="58%"}
+
+![](images/coalescent-10.svg)
+:::
+:::{.column width="42%"}
+
+$$
+\begin{aligned}
+\Exp T_\mathrm{Tot} &= \Exp\biggl[2T_2 + 3T_3 + \cdots + nT_n\biggr] \\
+  &= \sum_{k=2}^n k\frac{4N}{k(k-1)} \\
+  &= \sum_{k=2}^n \frac{4N}{(k-1)} \\
+   &= 4N\sum_{k=1}^{n-1} \frac{1}{k}
+\end{aligned}
+$$
+
+This is the expected number of opportunities (generations/meioses)
+for mutations to occur.  
+
+:::
+:::
+
+
+
+
+
+
+
+
+
+## The Neutral Coalescent with Varying Demography
+
+We have already noted that non-neutral mutations violate the assumptions
+of the coalescent.
+
+However, many  demographic scenarios can be accommodated in the 
+coalescent framework^[Recombination is also well-treated in the coalescent model, though we
+won't be discussing that today.]. E.g.:
+
+- Population growth / decline
+- Population structure:
+    -   Migration
+    -   Population splitting
+    -   Population joining
+
+
+Each of these scenarios affect the shape of the coalescent tree.
+
+
+
+## How Might Population Size Changes Affect the Tree?
+
+::: columns
+::: {.column width="70%"}
+
+![](images/coalescent-10.svg)
+:::
+:::{.column width="30%"}
+- Imagine that the population was larger in the past.  How do you expect that to affect $T_{10}$? What about $T_2$?
+
+- Now, what if the population was smaller in the past?
+
+- We have a short hands-on that lets us simulate, and then visualize, coalescent trees under different demographic scenarios.
+
+Link can be found at 
+:::
+:::
+
+

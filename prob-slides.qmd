@@ -317,7 +317,7 @@ usethis::use_course("eriqande/ngs-genotype-models")
 ```
 
 3.  You will need to answer the "Yes" response to a few questions. This will download an RStudio project and open it.
-4.  From this RStudio project's file browswer, open the file `001-allele-freq-estimation.Rmd`.
+4.  From this RStudio project's file browser, open the file `001-allele-freq-estimation.Rmd`.
 5.  If the message at the top of the file says you need some new packages, click the install option.
 6.  Then Click the "Run Document" button.
 

@@ -3,23 +3,62 @@
 This is a Quarto Book that holds most of the materials related to
 Eric C. Anderson's presentations at ConGen 2023.
 
-This year Eric is giving two different presentations:
+This year Eric is giving three different presentations:
 
-1. An introduction to the idea of probability and inference and how they
-are used in using genotype likelihoods for population genetic inference.
+
+1. An overview of the coalescent process and how it can be used to
+understand what genetic sequence data are expected to look like under
+different demographic scenarios.
+1. An introduction to the idea of probability and inference, and what
+that looks like for learning about populations from sequencing-read based 
+data.
 2. A short (1 hour) introduction to Snakemake---a flexible and full-featured
 workflow management system tailored to bioinformatic processing.
 
-For each of the presentations, there is a narrative description that may be found in the
+For the last two of these presentations, there is a narrative description that may be found in the
 pages of this book---each presentation constitutes a different chapter of this web-book.  These
 chapters can be accessed from the contents links to the left of the page.
 
-There are also slides that Eric will be using during the presentations. They
-were made using Quarto's `revealjs` format, and can be accessed here:
+There are also slides and hands-on exercise that Eric will be using during the presentations. The slides were
+were made using Quarto's `revealjs` format.  
 
-* [Coalescent LECTURE SLIDES](https://eriqande.github.io/con-gen-2023/slides/coal-slides.html)
-* [Probability, Inference and Genotype Likelihoods LECTURE SLIDES](https://eriqande.github.io/con-gen-2023/slides/prob-slides.html)
-* [Snakemake Introduction LECTURE SLIDES](https://eriqande.github.io/con-gen-2023/slides/snake-slides.html)
+The links to the slides and the hands-on exercises are found below.
+
+Note, will you need to have R (and it is helpful to have RStudio) in order
+to do the hands-on exercises.
+
+## The Coalescent 
+
+* [LECTURE SLIDES](https://eriqande.github.io/con-gen-2023/slides/coal-slides.html)
+* [Links to R Notebooks for Hands-on](https://eriqande.github.io/coalescent-hands-on/)
+
+
+## Probability, Inference and Genotype Likelihoods
+
+* [LECTURE SLIDES](https://eriqande.github.io/con-gen-2023/slides/prob-slides.html)
+* The materials for the hands on can be obtained in RStudio with the
+following steps:
+``` r
+if(!("usethis" %in% rownames(installed.packages()))) {
+  install.packages("usethis")
+}
+usethis::use_course("eriqande/ngs-genotype-models")
+```
+- You will need to answer the "Yes" response to a few questions. This will download an RStudio project and open it.
+- From this RStudio project's file browser, you can open the RMarkdown
+files, like: `001-allele-freq-estimation.Rmd`.
+- If the message at the top of the file says you need some new packages, click the install option.
+- Then Click the "Run Document" button.
+
+
+## Snakemake 
+
+* [LECTURE SLIDES](https://eriqande.github.io/con-gen-2023/slides/snake-slides.html)
+* To do the hands on, you need to log in to the...
+
+
+
+## Parting Thoughts
 
 If you haven't heard about Quarto yet, it is RStudio's successor to RMarkdown
 for making books, notebooks, and slide presentations.  To learn more about Quarto books visit <https://quarto.org/docs/books>.
