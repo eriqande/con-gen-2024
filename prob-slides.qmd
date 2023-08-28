@@ -42,7 +42,7 @@ We will play around with a Shiny App to cement all three of these ideas (small-g
 
 ## Personal Probability {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
--   We all have different histories, biases, perspectives, and *models* the influence how we interpret data.
+-   We all have different histories, biases, perspectives, and *models* that influence how we interpret data.
 -   Some simple card play.
 -   The take home message is that the probabilities we assign to different events depend on what information we have.
 
@@ -189,7 +189,7 @@ This simply uses the laws of probability to express our uncertainty about $p_A$ 
 
 -   $P(A)$ and $P(B)$ are referred to as *marginal* probabilities.
 
--   The *joint* probability of $A$ and $B$ is the probability that those *both* two outcomes occurred.
+-   The *joint* probability of $A$ and $B$ is the probability that *both* those two outcomes occurred.
 
 -   Joint prob = marginal probability times a *conditional* probability: $$
     P(A,B) = P(A)P(B~|~A) = P(B)P(A~|~B)
@@ -323,7 +323,7 @@ usethis::use_course("eriqande/ngs-genotype-models")
 
 **If that does not work for some of the students**: you can go directly to the website: <https://eriqande.shinyapps.io/001-allele-freq-estimation/>. But, be warned that if too many people use that link it will overwhelm my free ShinyApps account.
 
-## Breakout Groups {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+## Small Groups {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
 Take a few minutes to introduce yourselves to one another, then play with the Shiny app and talk to one another about it as you do. Maybe even work together to do these things:
 
@@ -335,7 +335,7 @@ Take a few minutes to introduce yourselves to one another, then play with the Sh
 -   Observe how the posterior distribution changes when sample size changes.
 -   With a true allele frequency of $p_T = 0$, with a sample size of 50 diploids, find values of the prior parameters that will give you a posterior centered on 0.5 (in other words a ridiculously heavy prior...)
 
-I'll try to say hello in the different breakout rooms.
+
 
 # Summarizing and Sampling from the Posterior Distribution {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
@@ -346,7 +346,9 @@ I'll try to say hello in the different breakout rooms.
     -   Mean
     -   Median
     -   Mode
-    -   Credible interval But, those are all summaries and don't have all the information that the full posterior gives you.
+    -   Credible interval
+    
+- But, those are all summaries and don't have all the information that the full posterior gives you.
 -   Sometimes posterior distributions are complex and you have to learn about them by *sampling from them* (unlike in the allele frequency case where we derived it analytically).
 
 ## Sampling from the Posterior {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
@@ -413,7 +415,7 @@ All of those quantities could have been obtained analytically in this case, but 
 
 -   First, we are looking at a single known SNP location, where the base in the sequence is either a $C$ or a $T$.
 -   We no longer observe the genotype without any error or uncertainty.
--   Rather, we observe the sequence of reads, each one a copy of one or the other of the two homologous gene copies of the genotype.
+-   Rather, we observe the sequencing reads, each one a copy of one or the other of the two homologous gene copies of the genotype.
 -   There is also some sequencing error!
 
 ## We Have Merely Added an Extra Layer of Nodes in our DAG {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
@@ -456,7 +458,9 @@ But, if we combine that with allele frequencies in our model:
 
 ![](images/paste-CFA9E398.png){fig-align="center" width="1700"}
 
-...then we can also compute the posterior probability (by MCMC sampling) of each genotype. If you are sampling from a single population, then this provides a *much* better estimate of the true genotype.
+...then we can also compute the posterior probability (by MCMC sampling) of each genotype. If you are sampling from a single population, then this provides a better estimate of the true genotype.
+
+* Also, it gives a better estimate of the allele frequency than simply assigning genotypes based on the likelihood alone.
 
 * Coming up, we have another Shiny app to play with this.
 
@@ -473,11 +477,10 @@ If this doesn't work for you, then you can access the Shiny app over the web:
 [https://eriqande.shinyapps.io/002-genotype-likelihoods-from-reads/](https://eriqande.shinyapps.io/002-genotype-likelihoods-from-reads/)
 
 - Then you can simulate genotypes, as before, but now, you can
-simulate reads from those genotypes, and then compute genotype posteriors using
-MCMC.
+simulate reads from those genotypes, and then compute genotype posteriors using MCMC.
 
 
-## Back to breakout rooms...some questions {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
+## Back to groups...some questions {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
 1. What are the likelihoods for the three different possible genotypes when the read depth is 0 for an individual?
 2. What does it take for the likelihood to be highest for the heterozygote hypothesis?
@@ -489,6 +492,110 @@ MCMC.
 There are more questions for thought at the bottom of the Shiny App Notebook, too.
 
 
+## Why do we care about this?
+
+### Whoa! Where's my heterozygotes at?
+
+R-package for assessing trends of departures from HWE where there shouldn't be any:
+
+[https://github.com/eriqande/whoa](https://github.com/eriqande/whoa)
+
+Survey of RAD data sets showed considerable issues:
+
+### A Gallery of Data sets
+
+Here are all the data sets I investigated, ordered by $m$ from smallest to largest.
+
+#### bonnethead_shark,  $m = 0.01$
+
+![](figures/bonnethead_shark_big_pop.png)
+
+
+
+
+#### wak_chinook,  $m = 0.02$
+
+![](figures/wak_chinook_big_pop.png)
+
+
+#### wifl,  $m = 0.03$
+
+![](figures/wifl_big_pop.png)
+
+
+
+
+#### red_drum,  $m = 0.05$
+
+![](figures/red_drum_big_pop.png)
+
+
+
+
+#### anguilla,  $m = 0.14$
+
+![](figures/anguilla_big_pop.png)
+
+
+
+
+#### chinook_hecht,  $m = 0.17$
+
+![](figures/chinook_hecht_big_pop.png)
+
+
+
+
+#### rostrata,  $m = 0.23$
+
+![](figures/rostrata_big_pop.png)
+
+
+
+
+#### lobster,  $m = 0.25$
+
+![](figures/lobster_big_pop.png)
+
+
+
+
+#### anchovy,  $m = 0.28$
+
+![](figures/anchovy_big_pop.png)
+
+
+
+
+#### snails,  $m = 0.45$
+
+![](figures/snails_big_pop.png)
+
+
+
+
+#### chinook_gatk,  $m = 0.50$
+
+![](figures/chinook_gatk_big_pop.png)
+
+
+
+
+#### dolphin_L_albirostris,  $m = 0.65$
+
+![](figures/dolphin_L_albirostris_big_pop.png)
+
+
+
+
+#### dolphin_L_acutus,  $m = 0.72$
+
+![](figures/dolphin_L_acutus_big_pop.png)
+
+
+### The culprit in some cases was low read-depth and "hard-cutoff" genotype calling:
+
+![](images/lobster-het-miscall-depth.png)
 
 # One last exercise if we have time {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 

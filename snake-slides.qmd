@@ -237,9 +237,12 @@ Some explanations:
 :::
 
 ::: {.column width="50%"}
-``` {.yaml filename="Snakefile"}
-`r paste(readLines("Snakemake-Example/Snakefile"), collapse = "\n")`
+```{r filename="Snakefile"}
+#| echo: true
+#| eval: false 
+#| file: Snakemake-Example/Snakefile
 ```
+
 :::
 :::
 
@@ -464,14 +467,16 @@ its outputs.
 * This means that an entire workflow with thousands of jobs can be triggered by
 requesting a single output file.
 
-### Short Breakout Room Activity
+### Short Group Activity
 
 * Trace the rules needed if we request the file `results/vcf/all.vcf`. 
 :::
 
 ::: {.column width="50%"}
-``` {.yaml filename="Snakefile"}
-`r paste(readLines("Snakemake-Example/Snakefile"), collapse = "\n")`
+```{r filename="Snakefile"}
+#| echo: true
+#| eval: false 
+#| file: Snakemake-Example/Snakefile
 ```
 :::
 :::
@@ -548,7 +553,7 @@ snakemake -np results/vcf/all.vcf
 :::
 
 * Check that it will not re-run the trimming, mapping, and gvcf-making steps for samples
-A and B, which are aleady done.  
+A and B, which are already done.  
 
 
 ## Snakemake makes it very easy to re-run failed jobs {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
@@ -641,7 +646,20 @@ Cool! It tells us explicitly which jobs remain to be run. And they are exactly t
 ones that depend on outputs from sample A.
   
   
-  
+Here is a related, fun tip: Snakemake writes the log of every real (i.e., without the `-n` option) run into a log file in `.snakemake/log`.  Try this:
+```sh
+ls .snakemake/log
+```
+If you want to get the log from the most recent run you can throw
+down some Unix:
+```sh
+ls -l .snakemake/log/*.log | tail -n 1 | awk '{print $NF}'
+```
+You can use that to find any lines that say `Error` in them to tell
+you more about the job that failed.  e.g.:
+```sh
+grep Error $(ls -l .snakemake/log/*.log | tail -n 1 | awk '{print $NF}')
+```
   
   
   
@@ -826,16 +844,163 @@ it looks like this:
 
 
 
+## Here is a more complex workflow graph
+### The dag for a run of [mega-non-model-wgs-snakeflow](https://github.com/eriqande/mega-non-model-wgs-snakeflow) that was processed by my R package [SnakemakeDagR](https://github.com/eriqande/SnakemakeDagR)
+
+<img href="file.jpg" style="width: 100%;" />
+
+![](images/andy-condensed-dag.svg){ width=100% }
+
+
+## Letting Snakemake interface with SLURM
+
+The way to most easily allow Snakemake to dispatch jobs via the SLURM
+scheduler is by way of the Snakemake `cluster` option provided in a
+Snakemake profile.
+
+A Snakemake profile is YAML file in which you can record command line options
+(and their arguments) for Snakemake.
+
+There is an officially supported Snakemake profile for SLURM, but I am
+partial to the Unix-based (as opposed to Python-based) approach to SLURM
+profiles for Snakemake described at: 
+[https://github.com/jdblischak/smk-simple-slurm](https://github.com/jdblischak/smk-simple-slurm).
+
+
+
+## A Snakemake profile for SLURM on the `Alpine`
+#### Alpine is the new NSF-funded cluster in Colorado
+
+- A Snakemake profile is simply a collection of command line arguments
+stored in a YAML file.
+
+- The `set-resources` and `threads` blocks are specific to my lcWGS workflow
+
+```{.yaml filename="Contents of hpcc-profiles/slurm/alpine/config.yaml"}
+cluster:
+  mkdir -p results/slurm_logs/{rule} &&
+  sbatch
+    --partition=amilan,csu
+    --cpus-per-task={threads}
+    --mem={resources.mem_mb}
+    --time={resources.time}
+    --job-name=smk-{rule}-{wildcards}
+    --output=results/slurm_logs/{rule}/{rule}-{wildcards}-%j.out
+    --error=results/slurm_logs/{rule}/{rule}-{wildcards}-%j.err
+    --parsable
+default-resources:
+  - time="08:00:00"
+  - mem_mb=3740
+  - tmpdir="results/snake-tmp"
+restart-times: 0
+max-jobs-per-second: 10
+max-status-checks-per-second: 50
+local-cores: 1
+latency-wait: 60
+cores: 2400
+jobs: 950
+keep-going: True
+rerun-incomplete: True
+printshellcmds: True
+use-conda: True
+rerun-trigger: mtime
+cluster-status: status-sacct-robust.sh
+cluster-cancel: scancel
+cluster-cancel-nargs: 4000
+
+
+set-threads:
+  map_reads: 4
+  realigner_target_creator: 4
+  genomics_db_import_chromosomes: 2
+  genomics_db_import_scaffold_groups: 2
+  genomics_db2vcf_scattered: 2
+set-resources:
+  map_reads:
+    mem_mb: 14960
+    time: "23:59:59"
+  make_gvcf_sections:
+    mem_mb: 3600
+    time: "23:59:59"
+  genomics_db_import_chromosomes:
+    mem_mb: 7480
+    time: "23:59:59"
+  genomics_db_import_scaffold_groups:
+    mem_mb: 11000
+    time: "23:59:59"
+  genomics_db2vcf_scattered:
+    mem_mb: 11000
+    time: "23:59:59"
+  multiqc_dir:
+    mem_mb: 37000
+  bwa_index:
+    mem_mb: 37000
+  realigner_target_creator:
+    mem_mb: 14960
+```
+
+
 ## We've only scratched the surface {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
 * You can specify fine-grained conda environments for each rule
 * Python code is allowed in most places in the Snakefile
 * _Input functions_ can be quite useful (or absolutely essential)
 * You can benchmark every job instance of a rule, which records the resources used (time, memory, etc.)
-* Pretty easy integration (once you get past the somewhat scattered documentation)
-with SLURM on your cluster.  (I recommend checking out the resources at
-[https://github.com/jdblischak/smk-simple-slurm](https://github.com/jdblischak/smk-simple-slurm))
 
+
+## Benchmarking jobs
+
+This is super easy.  You add to each rule a path for a benchmark file. For example:
+```{.yaml}
+rule map_reads:
+  input:
+    r1="results/trimmed/{sample}_R1.fastq.gz",
+    r2="results/trimmed/{sample}_R2.fastq.gz",
+    genome="resources/genome.fasta",
+    idx=multiext("resources/genome.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa")
+  output:
+    "results/bam/{sample}.bam"
+  log:
+    "results/logs/map_reads/{sample}.log"
+  benchmark:
+    "results/benchmarks/map_reads/{sample}.bmk"
+  params:
+    RG="-R '@RG\\tID:{sample}\\tSM:{sample}\\tPL:ILLUMINA' "
+  shell:
+    " (bwa mem {params.RG} {input.genome} {input.r1} {input.r2} | "
+    " samtools view -u | "
+    " samtools sort - > {output}) 2> {log} "
+
+```
+
+Then, each time that rule gets run (with a different wildcard) you get a little
+file like this:
+```{.tsv}
+s	h:m:s	max_rss	max_vms	max_uss	max_pss	io_in	io_out	mean_load	cpu_time
+164.7159	0:02:44	293.05	3523.55	263.11	269.15	1740.09	0.12	76.83	127.05
+```
+
+- This tells you how many seconds it ran (`s`), the max RAM use (`max_rss`), 
+amount of data read from disk and written to disk, total
+amount of CPU time, etc.
+- Super helpful
+- Easy to extract
+
+
+## Benchmark Example
+#### Jobs processing 43 rockfish on NMFS on-premises cluster (SEDNA) vs in the cloud on Microsoft Azure (AZHOP)
+
+<img href="file.jpg" style="width: 100%;" />
+
+![](images/azhop-map-reads.png){ width=100% }
+
+
+## Benchmark Example
+#### Super easy to extract that for all the rules with a little Unix and R
+
+<img href="file.jpg" style="width: 100%;" />
+
+![](images/azhop-facets.png){ width=100% }
 
 ## Where to from here? {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
@@ -846,7 +1011,7 @@ with SLURM on your cluster.  (I recommend checking out the resources at
 You might be interested in having a look at a workflow I wrote for whole genome sequencing
 of non-model organisms: [https://github.com/eriqande/mega-non-model-wgs-snakeflow](https://github.com/eriqande/mega-non-model-wgs-snakeflow).
 
-This provides a complete BWA-GATK workflow including an arbitrary number of "bootstrapped-BQSR" rounds.
+This provides a complete BWA-GATK workflow including an arbitrary number of "bootstrapped-BQSR" rounds (which turn out to be pretty useless...)
 
 
 ## Final Thoughts {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}

@@ -396,19 +396,203 @@ Each of these scenarios affect the shape of the coalescent tree.
 ## How Might Population Size Changes Affect the Tree?
 
 ::: columns
-::: {.column width="70%"}
+::: {.column width="62%"}
 
 ![](images/coalescent-10.svg)
 :::
-:::{.column width="30%"}
+:::{.column width="38%"}
 - Imagine that the population was larger in the past.  How do you expect that to affect $T_{10}$? What about $T_2$?
 
 - Now, what if the population was smaller in the past?
 
 - We have a short hands-on that lets us simulate, and then visualize, coalescent trees under different demographic scenarios.
 
-Link can be found at 
+A link to it can be found at:
+[https://eriqande.github.io/coalescent-hands-on/](https://eriqande.github.io/coalescent-hands-on/)
+:::
+:::
+You should have already done the commands in
+`000-prep-for-coalescent.nb.html`, and now we will be playing with
+`002-the-coalescent-and-demographic-scenarios.nb.html`.
+
+
+
+
+
+
+
+## Mutations Occur During Meioses
+### And they are inherited by the descendants
+
+::: columns
+::: {.column width="70%"}
+
+![](figure-creation/mutations-on-tree.svg)
+:::
+:::{.column width="30%"}
+- The little arrows indicate generic mutations
+- The colored balls at the bottom indicate
+the sampled gene copies that inherit the mutations
 :::
 :::
 
 
+
+
+
+
+
+
+## Mutations Occur During Meioses
+### And they are inherited by the descendants
+
+::: columns
+::: {.column width="70%"}
+
+![](figure-creation/mutations-on-tree-2.svg)
+:::
+:::{.column width="30%"}
+- The little arrows indicate generic mutations
+- The colored balls at the bottom indicate
+the sampled gene copies that inherit the mutations
+- Samples can inherit multiple mutations
+:::
+:::
+
+
+
+
+
+
+
+## The Infinite Sites Model
+### Every mutation is a different SNP
+
+::: columns
+::: {.column width="70%"}
+
+![](figure-creation/mutations-on-tree-3.svg)
+:::
+:::{.column width="30%"}
+- Convenient model your samples are
+DNA segments.
+- We are only showing the SNPs here
+- The ancestral allele is on the
+left of each mutation arrow.  
+- With `ms`: ancestral=0, mutant=1
+- Quick group activity with the tree and mutations
+from [https://eriqande.github.io/coalescent-hands-on/003-infinite-sites-mutation.nb.html](https://eriqande.github.io/coalescent-hands-on/003-infinite-sites-mutation.nb.html)
+
+:::
+:::
+
+
+
+
+
+
+## The Scaled Mutation Parameter $\theta = 4N\mu L$
+
+- When we talk about mutation rates, it is common to scale them
+by $4N$ or $2N$.  
+- `ms` scales them by $4N$.  Why? And what does this mean?
+- Let:
+    -   $\mu$ be the per-base mutation rate per-generation
+    -   $L$ be the number bases in a segment of DNA
+- Then $\mu L$ is the probability of a mutation each generation
+somewhere in the sequence.
+- Recall that $2N$ is the expected time for a pair of sampled genes (sequences) to coalesce in a population of $N$ diploids.
+    -   i.e. $\Exp T_2 = 2N$.
+- Thus, there the expected number of bases that differ between a pair
+of sequences is $4N\mu L$.
+- That is the expected number of heterozygous sites between a pair
+of sequences.
+
+
+
+
+
+
+
+
+## The Site Frequency Spectrum (SFS)
+
+- If you have $n$ samples (tips on the tree), then any mutation you see in your sample will occur in some number of samples between 1 and $n - 1$
+
+- Let $S_n^i$ denote the number of mutations that were inherited by $i$ haploid sequences out of a sample of $n$ of them.  
+
+- This is a common way to summarise data in conservation genetics and
+contains a lot of information about the history of the sample
+
+
+
+
+
+
+## The SFS on our Tiny Example
+### Only three SNPs so not very representative!
+
+::: columns
+::: {.column width="70%"}
+
+![](figure-creation/mutations-on-tree-3.svg)
+:::
+:::{.column width="30%"}
+- At the first SNP the mutation is seen in 2 out of 10 samples
+- At the 2nd SNP, 7 out of 10 samples.
+- At 3rd SNP, 4 out of 10 samples.
+
+So, from this silly, tiny example, we have:
+$$
+S_{10}^2 = 1~~~~~S_{10}^7 = 1~~~~~~S_{10}^4 = 1
+$$
+with all other $S_n^i = 0$.  
+:::
+:::
+
+
+
+
+
+
+
+
+
+
+## The Expected SFS of the Neutral Coalescent
+
+In a neutral coalescent with no population structure and constant population size^[A delightful proof of this was published recently in  [Hudson (2015) _PLoS One_ 10(7): e0118087](doi:10.1371/journal.pone.0118087)]:
+$$
+\Exp S_n^i = \frac{\theta}{i}~~~~\mathrm{for}~1\leq i < n
+$$
+The key here is the shape.  What does it look like? Here it is for $n=50$ and arbitrary $\theta$:
+
+![](images/sfs.png)
+
+## The site frequency spectrum can be observed
+
+- You can estimate the SFS from genomic data
+
+- By comparing it to the SFS expected under different scenarios, you
+can attempt to infer the demographic history of a population
+
+- We won't go into it, but many programs can do this:
+    - fastsimcoal
+    - dadi, i.e., $\partial a \partial i$
+    - moments
+
+
+- For now, we will simulate some one-dimensional SFS from the coalescent
+to gain some intuition about how the shape of the coalescent affects
+the one-dimensional SFS. 
+
+- [https://eriqande.github.io/coalescent-hands-on/004-one-dimensional-SFS.nb.html](https://eriqande.github.io/coalescent-hands-on/004-one-dimensional-SFS.nb.html)
+
+
+
+
+## Wrap Up
+
+We have only scratched the surface here, but I hope that some of y'all
+are convinced that the coalescent is an important topic to study more
+for understanding methodology in conservation genomics.  
