@@ -25,7 +25,7 @@
     "href": "index.html#snakemake",
     "title": "Con-Gen-2023",
     "section": "Snakemake",
-    "text": "Snakemake\n\nLECTURE SLIDES\nTo do the hands on, you need to log in to the…"
+    "text": "Snakemake\n\nLECTURE SLIDES\nTo do the hands on, you need to log into your RStudio Server account and use the Terminal to change directories into the Snakemake-Example directory that is in your home directory, i.e.:\n\ncd ~/Snakemake-Example\nIf you don’t have a Snakemake-Example directory in your home directory, then something has gone horribly wrong. If this is the case, try copying that folder from the instructor materials, using this:\ncd ~\ncp -r instructor_materials/Eric_Anderson/2023/Snakemake-Example ./"
   },
   {
     "objectID": "index.html#parting-thoughts",

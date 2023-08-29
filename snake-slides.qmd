@@ -668,16 +668,7 @@ grep Error $(ls -l .snakemake/log/*.log | tail -n 1 | awk '{print $NF}')
 
 ## Re-running failed jobs is as simple as just re-starting Snakemake {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
 
-* Let's say we notice that `data/A_R2.fastq.gz` was corrupted, and so we replace it
-with the uncorrupted version:
-
-::: {style="font-size: 1.7em;"}
-``` {.sh filename="Paste this into your shell"}
-cp data/A_R2.fastq.gz-ORIG data/A_R2.fastq.gz
-```
-:::
-
-* Then, do a dry-run to see what Snakemake will do to finish out the workflow:
+* First off, after a failure like that, we can always immediately do a dry-run to see what Snakemake must still do to finish out the workflow:
 
 ::: {style="font-size: 1.7em;"}
 ``` {.sh filename="Paste this into your shell"}
@@ -685,7 +676,7 @@ snakemake -np results/vcf/all.vcf
 ```
 :::
 
-It is only going to require 6 jobs to produce `results/vcf/all.vcf`:
+It is only going to require 6 more jobs to produce `results/vcf/all.vcf`:
 
 ::: {style="font-size: 1.7em;"}
 ``` {.sh filename="This is the end of the dry-run output"}
@@ -702,7 +693,21 @@ total                     6              1              1
 ```
 :::
 
-* So, start it up with 2 cores:
+
+* We see that it still has to do 1 trim job, which is the one that failed.
+
+* If we noticed that `data/A_R2.fastq.gz` was corrupted, we could replace it
+with the uncorrupted version:
+
+::: {style="font-size: 1.7em;"}
+``` {.sh filename="Paste this into your shell"}
+cp data/A_R2.fastq.gz-ORIG data/A_R2.fastq.gz
+```
+:::
+
+
+
+* Then, start it back up with 2 cores:
 
 ::: {style="font-size: 1.7em;"}
 ``` {.sh filename="Paste this into your shell"}
@@ -858,7 +863,7 @@ The way to most easily allow Snakemake to dispatch jobs via the SLURM
 scheduler is by way of the Snakemake `cluster` option provided in a
 Snakemake profile.
 
-A Snakemake profile is YAML file in which you can record command line options
+A Snakemake profile is a YAML file in which you can record command line options
 (and their arguments) for Snakemake.
 
 There is an officially supported Snakemake profile for SLURM, but I am
@@ -868,7 +873,7 @@ profiles for Snakemake described at:
 
 
 
-## A Snakemake profile for SLURM on the `Alpine`
+## A Snakemake profile for SLURM on `Alpine`
 #### Alpine is the new NSF-funded cluster in Colorado
 
 - A Snakemake profile is simply a collection of command line arguments
@@ -1012,6 +1017,27 @@ You might be interested in having a look at a workflow I wrote for whole genome 
 of non-model organisms: [https://github.com/eriqande/mega-non-model-wgs-snakeflow](https://github.com/eriqande/mega-non-model-wgs-snakeflow).
 
 This provides a complete BWA-GATK workflow including an arbitrary number of "bootstrapped-BQSR" rounds (which turn out to be pretty useless...)
+
+
+### Setting this up for yourself
+
+To use Snakemake on your own server/cluster/laptop you should:
+
+1. Install Mambaforge as described [here](https://mamba.readthedocs.io/en/latest/mamba-installation.html#fresh-install-recommended) 
+2. Create a new conda environment for snakemake as described [here](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html)
+```sh
+# i.e.:
+mamba create -c conda-forge -c bioconda -n snakemake snakemake
+```
+3. Then:
+```
+conda activate snakemake
+```
+
+Some notes: `mamba` is far faster (and better in almost all cases) than `conda`.
+It is also practically required for using snakemake conda blocks.
+
+
 
 
 ## Final Thoughts {background-image="quarto-static/slideswoosh-white.png" background-size="contain"}
