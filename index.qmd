@@ -1,21 +1,18 @@
 # Overview/Welcome {.unnumbered}
 
-This is a Quarto Book that holds most of the materials related to
+This is a Quarto Book that holds most of the materials and links related to
 Eric C. Anderson's presentations at ConGen 2024.
 
-This year Eric is giving three different presentations:
+This year Eric is giving two different presentations with hands-on sessions:
 
 
-1. An overview of the coalescent process and how it can be used to
-understand what genetic sequence data are expected to look like under
-different demographic scenarios.
 1. An introduction to the idea of probability and inference, and what
 that looks like for learning about populations from sequencing-read based 
 data.
-2. A short (1 hour) introduction to Snakemake---a flexible and full-featured
+2. A short (1.5 hour) introduction to Snakemake---a flexible and full-featured
 workflow management system tailored to bioinformatic processing.
 
-For the last two of these presentations, there is a narrative description that may be found in the
+For these two presentations, there is a narrative description that may be found in the
 pages of this book---each presentation constitutes a different chapter of this web-book.  These
 chapters can be accessed from the contents links to the left of the page.
 
@@ -27,15 +24,10 @@ The links to the slides and the hands-on exercises are found below.
 Note, will you need to have R (and it is helpful to have RStudio) in order
 to do the hands-on exercises.
 
-## The Coalescent 
-
-* [LECTURE SLIDES](https://eriqande.github.io/con-gen-2024/slides/coal-slides.html)
-* [Links to R Notebooks for Hands-on](https://eriqande.github.io/coalescent-hands-on/)
-
 
 ## Probability, Inference and Genotype Likelihoods
 
-* [LECTURE SLIDES](https://eriqande.github.io/con-gen-2024/slides/prob-slides.html)
+* [LECTURE SLIDES](https://eriqande.github.io/con-gen-2024/slides/prob-slides.html){target="_blank"}
 * The materials for the hands on can be obtained in RStudio with the
 following steps:
 ``` r
@@ -53,7 +45,7 @@ files, like: `001-allele-freq-estimation.Rmd`.
 
 ## Snakemake 
 
-* [LECTURE SLIDES](https://eriqande.github.io/con-gen-2024/slides/snake-slides.html)
+* [LECTURE SLIDES](https://eriqande.github.io/con-gen-2024/slides/snake-slides.html){target="_blank"}
 * To do the hands on, you need to log into your RStudio Server account and use the Terminal
 to change directories into the Snakemake-Example directory that is in your home directory, i.e.:
 ```sh
@@ -71,11 +63,28 @@ cp -r instructor_materials/Eric_Anderson/2024/Snakemake-Example ./
 
 ## Parting Thoughts
 
-If you haven't heard about Quarto yet, it is RStudio's successor to RMarkdown
-for making books, notebooks, and slide presentations.  To learn more about Quarto books visit <https://quarto.org/docs/books>.
+### Quarto
 
+If you haven't heard about Quarto yet, it is RStudio's successor to RMarkdown
+for making books, notebooks, and slide presentations.  To learn more about Quarto books visit [https://quarto.org/docs/books](https://quarto.org/docs/books){target="_blank"}.
+
+
+### Bioinformatics Book
 
 Finally, as an aside. If you are starting to get into genomics and bioinformatics,
-you might be interested in checking out [Eric's Bioinformatics Handbook](https://eriqande.github.io/eca-bioinf-handbook/) on the web.
+you might be interested in checking out [Eric's Bioinformatics Handbook](https://eriqande.github.io/con-gen-csu/){target="_blank"} on the web.
 It is not complete, but it has some reasonably informative sections within it.
 (And it's free!)
+
+### Old Lectures Not Given This Year
+
+
+#### The Coalescent 
+
+In 2023, Eric also gave an overview of the coalescent process and how it can be used to
+understand what genetic sequence data are expected to look like under
+different demographic scenarios.  He isn't doing it this
+year, but the slides are included here for the curious.
+
+* [LECTURE SLIDES](https://eriqande.github.io/con-gen-2024/slides/coal-slides.html){target="_blank"}
+* [Links to R Notebooks for Hands-on](https://eriqande.github.io/coalescent-hands-on/){target="_blank"}

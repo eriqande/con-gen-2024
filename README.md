@@ -6,7 +6,11 @@ that Eric C. Anderson is using for teaching
 materials in 2024 while teaching at the remote/online version of the UMT/Flathead Lake
 Conservation Genomics Workshop.
 
-In order to build the site, from the top level of the directory, you can do this:
+In order to build the site, from the top level of the directory, you have to run
+all the following commands.  Note that rendering the book deletes the slides within
+the docs/ directory, so you always have to re-do the slides after rendering
+the book.  Fortunately, quarto renders this stuff very quickly.
+
 
 ```sh
 # render the book that has the narratives and schedule

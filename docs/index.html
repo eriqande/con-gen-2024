@@ -180,10 +180,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#overviewwelcome" id="toc-overviewwelcome" class="nav-link active" data-scroll-target="#overviewwelcome">Overview/Welcome</a>
   <ul class="collapse">
-  <li><a href="#the-coalescent" id="toc-the-coalescent" class="nav-link" data-scroll-target="#the-coalescent">The Coalescent</a></li>
   <li><a href="#probability-inference-and-genotype-likelihoods" id="toc-probability-inference-and-genotype-likelihoods" class="nav-link" data-scroll-target="#probability-inference-and-genotype-likelihoods">Probability, Inference and Genotype Likelihoods</a></li>
   <li><a href="#snakemake" id="toc-snakemake" class="nav-link" data-scroll-target="#snakemake">Snakemake</a></li>
-  <li><a href="#parting-thoughts" id="toc-parting-thoughts" class="nav-link" data-scroll-target="#parting-thoughts">Parting Thoughts</a></li>
+  <li><a href="#parting-thoughts" id="toc-parting-thoughts" class="nav-link" data-scroll-target="#parting-thoughts">Parting Thoughts</a>
+  <ul class="collapse">
+  <li><a href="#quarto" id="toc-quarto" class="nav-link" data-scroll-target="#quarto">Quarto</a></li>
+  <li><a href="#bioinformatics-book" id="toc-bioinformatics-book" class="nav-link" data-scroll-target="#bioinformatics-book">Bioinformatics Book</a></li>
+  <li><a href="#old-lectures-not-given-this-year" id="toc-old-lectures-not-given-this-year" class="nav-link" data-scroll-target="#old-lectures-not-given-this-year">Old Lectures Not Given This Year</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -224,28 +228,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="overviewwelcome" class="level1 unnumbered">
 <h1 class="unnumbered">Overview/Welcome</h1>
-<p>This is a Quarto Book that holds most of the materials related to Eric C. Anderson’s presentations at ConGen 2024.</p>
-<p>This year Eric is giving three different presentations:</p>
+<p>This is a Quarto Book that holds most of the materials and links related to Eric C. Anderson’s presentations at ConGen 2024.</p>
+<p>This year Eric is giving two different presentations with hands-on sessions:</p>
 <ol type="1">
-<li>An overview of the coalescent process and how it can be used to understand what genetic sequence data are expected to look like under different demographic scenarios.</li>
 <li>An introduction to the idea of probability and inference, and what that looks like for learning about populations from sequencing-read based data.</li>
-<li>A short (1 hour) introduction to Snakemake—a flexible and full-featured workflow management system tailored to bioinformatic processing.</li>
+<li>A short (1.5 hour) introduction to Snakemake—a flexible and full-featured workflow management system tailored to bioinformatic processing.</li>
 </ol>
-<p>For the last two of these presentations, there is a narrative description that may be found in the pages of this book—each presentation constitutes a different chapter of this web-book. These chapters can be accessed from the contents links to the left of the page.</p>
+<p>For these two presentations, there is a narrative description that may be found in the pages of this book—each presentation constitutes a different chapter of this web-book. These chapters can be accessed from the contents links to the left of the page.</p>
 <p>There are also slides and hands-on exercise that Eric will be using during the presentations. The slides were were made using Quarto’s <code>revealjs</code> format.</p>
 <p>The links to the slides and the hands-on exercises are found below.</p>
 <p>Note, will you need to have R (and it is helpful to have RStudio) in order to do the hands-on exercises.</p>
-<section id="the-coalescent" class="level2">
-<h2 class="anchored" data-anchor-id="the-coalescent">The Coalescent</h2>
-<ul>
-<li><a href="https://eriqande.github.io/con-gen-2024/slides/coal-slides.html">LECTURE SLIDES</a></li>
-<li><a href="https://eriqande.github.io/coalescent-hands-on/">Links to R Notebooks for Hands-on</a></li>
-</ul>
-</section>
 <section id="probability-inference-and-genotype-likelihoods" class="level2">
 <h2 class="anchored" data-anchor-id="probability-inference-and-genotype-likelihoods">Probability, Inference and Genotype Likelihoods</h2>
 <ul>
-<li><a href="https://eriqande.github.io/con-gen-2024/slides/prob-slides.html">LECTURE SLIDES</a></li>
+<li><a href="https://eriqande.github.io/con-gen-2024/slides/prob-slides.html" target="_blank">LECTURE SLIDES</a></li>
 <li>The materials for the hands on can be obtained in RStudio with the following steps:</li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span>(<span class="st">"usethis"</span> <span class="sc">%in%</span> <span class="fu">rownames</span>(<span class="fu">installed.packages</span>()))) {</span>
@@ -262,7 +258,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="snakemake" class="level2">
 <h2 class="anchored" data-anchor-id="snakemake">Snakemake</h2>
 <ul>
-<li><a href="https://eriqande.github.io/con-gen-2024/slides/snake-slides.html">LECTURE SLIDES</a></li>
+<li><a href="https://eriqande.github.io/con-gen-2024/slides/snake-slides.html" target="_blank">LECTURE SLIDES</a></li>
 <li>To do the hands on, you need to log into your RStudio Server account and use the Terminal to change directories into the Snakemake-Example directory that is in your home directory, i.e.:</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/Snakemake-Example</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -272,10 +268,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="parting-thoughts" class="level2">
 <h2 class="anchored" data-anchor-id="parting-thoughts">Parting Thoughts</h2>
-<p>If you haven’t heard about Quarto yet, it is RStudio’s successor to RMarkdown for making books, notebooks, and slide presentations. To learn more about Quarto books visit <a href="https://quarto.org/docs/books" class="uri">https://quarto.org/docs/books</a>.</p>
-<p>Finally, as an aside. If you are starting to get into genomics and bioinformatics, you might be interested in checking out <a href="https://eriqande.github.io/eca-bioinf-handbook/">Eric’s Bioinformatics Handbook</a> on the web. It is not complete, but it has some reasonably informative sections within it. (And it’s free!)</p>
+<section id="quarto" class="level3">
+<h3 class="anchored" data-anchor-id="quarto">Quarto</h3>
+<p>If you haven’t heard about Quarto yet, it is RStudio’s successor to RMarkdown for making books, notebooks, and slide presentations. To learn more about Quarto books visit <a href="https://quarto.org/docs/books" target="_blank">https://quarto.org/docs/books</a>.</p>
+</section>
+<section id="bioinformatics-book" class="level3">
+<h3 class="anchored" data-anchor-id="bioinformatics-book">Bioinformatics Book</h3>
+<p>Finally, as an aside. If you are starting to get into genomics and bioinformatics, you might be interested in checking out <a href="https://eriqande.github.io/con-gen-csu/" target="_blank">Eric’s Bioinformatics Handbook</a> on the web. It is not complete, but it has some reasonably informative sections within it. (And it’s free!)</p>
+</section>
+<section id="old-lectures-not-given-this-year" class="level3">
+<h3 class="anchored" data-anchor-id="old-lectures-not-given-this-year">Old Lectures Not Given This Year</h3>
+<section id="the-coalescent" class="level4">
+<h4 class="anchored" data-anchor-id="the-coalescent">The Coalescent</h4>
+<p>In 2023, Eric also gave an overview of the coalescent process and how it can be used to understand what genetic sequence data are expected to look like under different demographic scenarios. He isn’t doing it this year, but the slides are included here for the curious.</p>
+<ul>
+<li><a href="https://eriqande.github.io/con-gen-2024/slides/coal-slides.html" target="_blank">LECTURE SLIDES</a></li>
+<li><a href="https://eriqande.github.io/coalescent-hands-on/" target="_blank">Links to R Notebooks for Hands-on</a></li>
+</ul>
 
 
+</section>
+</section>
 </section>
 </section>
 
