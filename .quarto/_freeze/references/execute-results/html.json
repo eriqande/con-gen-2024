@@ -1,6 +1,7 @@
 {
   "hash": "dc7fff402c2aa554acbfb019b38953b4",
   "result": {
+    "engine": "knitr",
     "markdown": "# References {.unnumbered}\n\n\n\n\n::: {#refs}\n:::\n\n\n\n",
     "supporting": [],
     "filters": [
