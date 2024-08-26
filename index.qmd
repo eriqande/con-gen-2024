@@ -28,8 +28,10 @@ to do the hands-on exercises.
 ## Probability, Inference and Genotype Likelihoods
 
 * [LECTURE SLIDES](https://eriqande.github.io/con-gen-2024/slides/prob-slides.html){target="_blank"}
-* The materials for the hands on can be obtained in RStudio with the
-following steps:
+* The materials for the hands on does _not_ run on the ConGen Rstudio Server.  Rather,
+it must be run locally on your own computer using R and Rstudio.  You should have
+R and Rstudio installed, with the package 'tidyverse' installed.  With that setup
+you can get the RStudio project to run the hands on sessions with the following steps:
 ``` r
 if(!("usethis" %in% rownames(installed.packages()))) {
   install.packages("usethis")
