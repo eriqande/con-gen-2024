@@ -871,7 +871,9 @@ partial to the Unix-based (as opposed to Python-based) approach to SLURM
 profiles for Snakemake described at: 
 [https://github.com/jdblischak/smk-simple-slurm](https://github.com/jdblischak/smk-simple-slurm).
 
-
+I am presenting, here, the approach for Snakemake versions less than 8.0.
+For Snakemake versions >= 8.0 there are some slight modifications.
+See [the expanded explanation, in my online bioinformatic book](https://eriqande.github.io/con-gen-csu/nmfs-bioinf/snakemake-embellishments.html#running-snakemake-on-a-cluster-resources-profiles-and-benchmarks).
 
 ## A Snakemake profile for SLURM on `Alpine`
 #### Alpine is the new NSF-funded cluster in Colorado
